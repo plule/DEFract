@@ -20,7 +20,7 @@ function love.load()
 		float w = 800.0;
 		float h = 600.0;
 		float foc = 4;
-		int maxIteration = 20;
+		int maxIteration = 200;
 		int Iterations = 15;
 		float threshold = 0.005;
 		float Scale=2;
@@ -28,8 +28,9 @@ function love.load()
 		float Bailout=5;
 		float minRadius2 = 0.9;
 		float fixedRadius2 = 5.;
+		float fixedRadius = 1.;
 		float foldingLimit = 2.;
-		
+/*
 		void sphereFold(inout vec3 z, inout float dz) {
 			float r2 = dot(z,z);
 			if (r2<minRadius2) {
@@ -62,13 +63,14 @@ function love.load()
 			}
 			float r = length(z);
 			return r/abs(dr);
-		}
-		
-		/*float DE(vec3 z)
-		{
-			z.xy = mod((z.xy),1.0)-vec2(0.5);
-			return min(length(z)-0.3, z.z+0.3);
 		}*/
+		
+		float DE(vec3 z)
+		{
+			vec3 y = z;
+			y.xy = mod((z.xy),1.0)-vec2(0.5);
+			return min(length(y)-0.3, y.x*y.x+y.y*y.z/10);
+		}
 /*
 float DE(vec3 pos) {
 	vec3 z = pos;
@@ -102,7 +104,7 @@ float DE(vec3 pos) {
 			pc.y = pc.y/h-0.5;
 			vec3 p = origin + planex*pc.x + planey*pc.y;
 			vec3 d = (p-position) / length(p-position);
-			p=position;
+			//p=position;
 			float distance = DE(p);
 			int i;
 			while((distance > threshold) && (i < maxIteration))
@@ -112,7 +114,8 @@ float DE(vec3 pos) {
 				i++;
 			}
 			float j = i;
-			return vec4(1-j/maxIteration, 1-j/maxIteration, 1-j/maxIteration, 1);
+			float co = 1-j/maxIteration;
+			return vec4(co);
 		}
 	]]
 	love.graphics.setPixelEffect(fractal)
