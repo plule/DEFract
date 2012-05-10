@@ -5,6 +5,7 @@ return {
 	direction = {speed=2, phi=math.pi/6, theta=math.pi/2},
 	code = [[
 float Scale=2;
+int Iterations = 10;    // Max iteration of the fractal generation
 int Power=8;
 float Bailout=5;
 float minRadius2 = 0.9;

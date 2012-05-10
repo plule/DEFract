@@ -7,7 +7,7 @@ return {
 float DE(vec3 z)
 {
 	z.xy = mod((z.xy),1.0)-vec2(0.5);
-	return min(length(z)-0.4, z.z+0.1);
+	return min(length(z)-0.4, z.z+0.3);
 }
 ]]
 }
