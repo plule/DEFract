@@ -6,9 +6,8 @@ extern vec3 planex;  // definition of the projection plane
 extern vec3 planey;
 float w = 800.0;     // Size of the window
 float h = 600.0;
-int maxIteration = 70; // Max number of rendering step
-int Iterations = 30;    // Max iteration of the fractal generation
-float threshold = 0.05;// Limit to estimate that we touch the object
+int maxIteration = 50; // Max number of rendering step
+float threshold = 0.001;// Limit to estimate that we touch the object
 ]],
 	codeRenderer = [[
 vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)

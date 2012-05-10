@@ -20,6 +20,7 @@ function love.load()
 	loadFract(fractFiles[1])
 	loadedFract = 0
 	focus = true
+	printInfos = false
 end
 
 function loadFract(fileName, dontChangeParams)
@@ -65,6 +66,12 @@ function love.draw()
 		love.graphics.setColor(0,0,0)
 		love.graphics.rectangle("fill",0,0,width,height)
 		love.graphics.setColor(255,255,255)
+		if printInfos then
+			love.graphics.setPixelEffect()
+			love.graphics.setColor(255,0,0)
+			love.graphics.print("position "..tostring(position),0,0)
+			love.graphics.print("direction : speed "..direction.speed.." phi "..direction.phi.." theta "..direction.theta,0,15)
+		end
 	end
 end
 
@@ -115,6 +122,9 @@ function love.keypressed(k,u)
 		love.mouse.setGrab(false)
 		love.mouse.setVisible(true)
 		focus = false
+	end
+	if k== ' ' then
+		printInfos = not printInfos
 	end
 end
 
