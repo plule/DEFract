@@ -1,11 +1,9 @@
-vector = require("vector")
+vector = require("vector3d")
 
 function love.load()
-	position = vector(15, 15)
-	direction = vector(-2, -2):normalized()
-	zpos = 1
+	position = vector(15, 15, 5)
+	dir = {speed=2, phi=0, theta=math.pi/2}
 	mouse = {x=love.mouse.getX(), y=love.mouse.getY()}
-	speed = 2
 	projDist=0.4
 	height = love.graphics.getHeight()
 	width = love.graphics.getWidth()
@@ -67,9 +65,8 @@ function love.load()
 		
 		float DE(vec3 z)
 		{
-			vec3 y = z;
-			y.xy = mod((z.xy),1.0)-vec2(0.5);
-			return min(length(y)-0.3, y.x*y.x+y.y*y.z/10);
+			z.xy = mod((z.xy),1.0)-vec2(0.5);
+			return length(z)-0.3;
 		}
 /*
 float DE(vec3 pos) {
@@ -122,16 +119,16 @@ float DE(vec3 pos) {
 end
 
 function love.draw()
-	origin = {(position+direction*projDist):unpack()}
-	origin[3] = zpos
-	pos = {position:unpack()}
-	pos[3] = zpos
-	fractal:send("position", pos)
-	fractal:send("origin", origin)
-	fractal:send("planey", {0,0,height/1000})
-	planex = {((direction:rotated(math.pi/2)):normalized()*width/1000):unpack()}
-	planex[3] = 0
-	fractal:send("planex", planex)
+	normalizedDir = vectorFromSpherical(1,dir.theta,dir.phi)
+	origin = position+normalizedDir*projDist
+	fractal:send("position", {position:unpack()})
+	fractal:send("origin", {origin:unpack()})
+	
+	planey = vectorFromSpherical(height/1000,dir.theta-math.pi/2, dir.phi)
+	fractal:send("planey", {planey:unpack()})
+	
+	planex = vectorFromSpherical(width/1000,math.pi/2, dir.phi+math.pi/2)
+	fractal:send("planex", {planex:unpack()})
 	love.graphics.setColor(0,0,0)
 	love.graphics.rectangle("fill",0,0,width,height)
 	love.graphics.setColor(255,255,255)
@@ -144,25 +141,29 @@ function love.draw()
 end
 
 function love.update(dt)
+	direction = vectorFromSpherical(dir.speed, dir.theta, dir.phi)
 	if(love.keyboard.isDown("up")) then
-		position = position + direction*speed*dt
+		position = position + direction*dt
 	end
-	if(love.keyboard.isDown("down")) then
-		position = position - direction*speed*dt
+	if(love.keyboard.isDown("u")) then
+		position = position - direction*dt
 	end
 	if(love.keyboard.isDown("pageup")) then
-		zpos = zpos + speed*dt
+		position.z = position.z + dir.speed*dt
 	end
 	if(love.keyboard.isDown("pagedown")) then
-		zpos = zpos - speed*dt
+		position.z = position.z - dir.speed*dt
 	end
 	if(love.keyboard.isDown("left")) then
-		position = position + (direction:rotated(-math.pi/2))*speed*dt
+		direction = position + vectorFromSpherical(dir.speed, dir.theta, dir.phi-math.pi/2)
+		position = position + (direction:rotated(-math.pi/2))*dt
 	end
 	if(love.keyboard.isDown("right")) then
-		position = position + (direction:rotated(math.pi/2))*speed*dt
+		direction = position + vectorFromSpherical(dir.speed, dir.theta, dir.phi+math.pi/2)
+		position = position + (direction:rotated(math.pi/2))*dt
 	end
-	direction:rotate_inplace((love.mouse.getX()-mouse.x)/100)
+	dir.phi = dir.phi+(love.mouse.getX()-mouse.x)/100
+	dir.theta = dir.theta+(love.mouse.getY()-mouse.y)/100
 
 	mouse = {x=love.mouse.getX(), y=love.mouse.getY()}
 	if mouse.x == 0 then mouse.x = width-2 end
@@ -172,8 +173,14 @@ function love.update(dt)
 	love.mouse.setPosition(mouse.x, mouse.y)
 end
 
-function love.keypressed(k)
+function love.keypressed(k,u)
 	if k == 'escape' then
 		love.event.quit()
 	end
+end
+
+function vectorFromSpherical(r, theta, phi)
+	return vector(	r*math.cos(phi)*math.sin(theta),
+			r*math.sin(phi)*math.sin(theta),
+			r*math.cos(theta))
 end

@@ -162,6 +162,11 @@ function vector:yaw_inplace(theta)
 	self.x,self.y = c * self.x - s * self.y, s * self.x + c * self.y
 end
 
+function vector:yawed(theta)
+	local c, s = cos(theta),sin(theta)
+	return new(c * self.x - s * self.y, s * self.x + c * self.y, self.z)
+end
+
 function vector:pitch_inplace(theta)
 	local c, s = cos(theta),sin(theta)
 	self.x,self.z = c * self.x + s * self.z, - s * self.x + c * self.z
