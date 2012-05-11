@@ -133,20 +133,32 @@ function love.update(dt)
 		love.mouse.setPosition(mouse.x, mouse.y)
 	end
 end
---[[
-function getScreenShotIndex()
-	i = 1
+
+function storeScreenShot()
+	local i = 1
 	while love.filesystem.exists("DEFract_"..i..".jpg") do
 		i = i+1
 	end
-	return i
+	local name = "DEFract_"..i
+	render.renderTo(currFract, screenshotcanvas, "hd")
+	screenshotcanvas:getImageData():encode(name..".jpg")
+	local description = love.filesystem.newFile(name..".txt")
+	description:open('w')
+	content = [[
+{position=vector%s, direction = {speed=%f, phi=%f, theta=%f}},
+-------------
+filename : %s
+threshold : %f
+maxIterations : %i
+
+code :
+%s
+	]]
+	content = content:format(tostring(position), direction.speed, direction.phi, direction.theta, currFract.path, threshold, maxIterations, currFract.code)
+	description:write(content)
+	description:close()
 end
 
-function storeScreenShot(index)
-	render.renderTo
-end
-
-]]
 function love.keypressed(k,u)
 	if k == 'tab' then
 		currFractNb = ((currFractNb)%(#fractals))+1
@@ -154,8 +166,7 @@ function love.keypressed(k,u)
 		loadParameters(currFract)
 	end
 	if k == 'f2' then
-		render.renderTo(currFract, screenshotcanvas, "hd")
-		screenshotcanvas:getImageData():encode("out.jpg")
+		storeScreenShot()
 	end
 	if k == 'escape' then
 		love.event.quit()

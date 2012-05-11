@@ -4,6 +4,7 @@ return {
 	views = {
 		{position = vector(-12, -28, 10), direction = {speed=2, phi=1, theta=2}},
 		{position = vector(-1.359,-8.363,5.480), direction = {speed=2, phi=1.55, theta=2.14}},
+		{position=vector(0.0031743541978261,-9.4093969864814,0.013476554949394), direction = {speed=2.000000, phi=1.520000, theta=1.640000}},
 	},
 	rt = {threshold=0.01,maxIterations=58},
 	hd = {threshold=0.002,maxIterations=70},
