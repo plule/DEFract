@@ -16,6 +16,8 @@ function love.load()
 			table.insert(fractFiles,file)
 		end
 	end
+	rtcanvas = love.graphics.newCanvas()
+	mustRedraw = true
 	love.graphics.setBackgroundColor(0,0,0)
 	loadFract(fractFiles[1])
 	loadedFract = 0
@@ -61,30 +63,37 @@ function love.draw()
 		love.graphics.print(fractal,0,15)
 		focus = false
 	else
-		fractal:send("maxIterations", maxIterations)
-		fractal:send("threshold",threshold)
-		
-		love.graphics.setPixelEffect(fractal)
-		normalizedDir = vectorFromSpherical(1,direction.theta,direction.phi)
-		origin = position+normalizedDir*projDist
-		fractal:send("position", {position:unpack()})
-		fractal:send("origin", {origin:unpack()})
-		
-		planey = vectorFromSpherical(height/1000,direction.theta-math.pi/2, direction.phi)
-		fractal:send("planey", {planey:unpack()})
-		
-		planex = vectorFromSpherical(width/1000,math.pi/2, direction.phi+math.pi/2)
-		fractal:send("planex", {planex:unpack()})
-		love.graphics.setColor(0,0,0)
-		love.graphics.rectangle("fill",0,0,width,height)
-		love.graphics.setColor(255,255,255)
-		if printInfos then
-			love.graphics.setPixelEffect()
-			love.graphics.setColor(255,0,0)
-			love.graphics.print("position "..tostring(position),0,0)
-			love.graphics.print("direction : speed "..direction.speed.." phi "..direction.phi.." theta "..direction.theta,0,15)
-			love.graphics.print("maxIterations : "..maxIterations.." threshold "..threshold,0,30)
+		if mustRedraw then
+			print("redrawing")
+			love.graphics.setCanvas(rtcanvas)
+			fractal:send("maxIterations", maxIterations)
+			fractal:send("threshold",threshold)
+			
+			love.graphics.setPixelEffect(fractal)
+			normalizedDir = vectorFromSpherical(1,direction.theta,direction.phi)
+			origin = position+normalizedDir*projDist
+			fractal:send("position", {position:unpack()})
+			fractal:send("origin", {origin:unpack()})
+			
+			planey = vectorFromSpherical(height/1000,direction.theta-math.pi/2, direction.phi)
+			fractal:send("planey", {planey:unpack()})
+			
+			planex = vectorFromSpherical(width/1000,math.pi/2, direction.phi+math.pi/2)
+			fractal:send("planex", {planex:unpack()})
+			love.graphics.setColor(0,0,0)
+			love.graphics.rectangle("fill",0,0,width,height)
+			love.graphics.setColor(255,255,255)
+			if printInfos then
+				love.graphics.setPixelEffect()
+				love.graphics.setColor(255,0,0)
+				love.graphics.print("position "..tostring(position),0,0)
+				love.graphics.print("direction : speed "..direction.speed.." phi "..direction.phi.." theta "..direction.theta,0,15)
+				love.graphics.print("maxIterations : "..maxIterations.." threshold "..threshold,0,30)
+			end
+			mustRedraw = false
+			love.graphics.setCanvas()
 		end
+		love.graphics.draw(rtcanvas,0,0)
 	end
 end
 
@@ -100,31 +109,40 @@ function love.update(dt)
 	if(love.keyboard.isDown("up")) then
 		dir = vectorFromSpherical(direction.speed, direction.theta, direction.phi)
 		position = position + dir*dt
+		mustRedraw = true
 	end
 	if(love.keyboard.isDown("down")) then
 		dir = vectorFromSpherical(direction.speed, direction.theta, direction.phi)
 		position = position - dir*dt
+		mustRedraw = true
 	end
 	if(love.keyboard.isDown("pageup")) then
 		position.z = position.z + direction.speed*dt
+		mustRedraw = true
 	end
 	if(love.keyboard.isDown("pagedown")) then
 		position.z = position.z - direction.speed*dt
+		mustRedraw = true
 	end
 	if(love.keyboard.isDown("left")) then
 		position = position + vectorFromSpherical(direction.speed, math.pi/2, direction.phi-math.pi/2)*dt
+		mustRedraw = true
 	end
 	if(love.keyboard.isDown("right")) then
 		position = position + vectorFromSpherical(direction.speed, math.pi/2, direction.phi+math.pi/2)*dt
+		mustRedraw = true
 	end
 	if(love.keyboard.isDown("home")) then
 		projDist = projDist+dt
+		mustRedraw = true
 	end
 	if(love.keyboard.isDown("end")) then
 		projDist = projDist-dt
+		mustRedraw = true
 	end
 	
-	if focus then
+	if focus and (mouse.x ~= love.mouse.getX() or mouse.y ~= love.mouse.getY()) then
+		mustRedraw = true
 		direction.phi = direction.phi+(love.mouse.getX()-mouse.x)/100
 		direction.theta = direction.theta+(love.mouse.getY()-mouse.y)/100
 
@@ -141,9 +159,11 @@ function love.keypressed(k,u)
 	if k == 'tab' then
 		loadedFract = (loadedFract+1)%(#fractFiles)
 		loadFract(fractFiles[loadedFract+1])
+		mustRedraw = true
 	end
 	if k == 'f5' then
 		reloadFract()
+		mustRedraw = true
 	end
 	if k == 'escape' then
 		love.mouse.setGrab(false)
@@ -152,6 +172,7 @@ function love.keypressed(k,u)
 	end
 	if k== ' ' then
 		printInfos = not printInfos
+		mustRedraw = true
 	end
 end
 
@@ -164,13 +185,16 @@ end
 function love.mousepressed(x,y,button)
 	if button == "wu" then
 		maxIterations = maxIterations+4
+		mustRedraw = true
 	elseif button == "wd" then
 		maxIterations = maxIterations-4
+		mustRedraw = true
 	else
 		mouse.x,mouse.y = love.mouse.getX(),love.mouse.getY()
 		focus = true
 		love.mouse.setGrab(true)
 		love.mouse.setVisible(false)
 		reloadFract()
+		mustRedraw = true
 	end
 end
