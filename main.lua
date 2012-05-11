@@ -11,8 +11,16 @@ function love.load()
 	love.mouse.setGrab(true)
 	love.mouse.setVisible(false)
 	fractals = {}
-	for _,file in ipairs(love.filesystem.enumerate("fractals")) do
+	love.filesystem.mkdir("fractals")
+	for _,file in ipairs(love.filesystem.enumerate("examples")) do
 		if file:sub(-4) == ".lua" then
+			if not love.filesystem.exists("fractals/"..file) then
+				src = love.filesystem.newFile("examples/"..file)
+				src:open('r')
+				dest = love.filesystem.newFile("fractals/"..file)
+				dest:open('w')
+				dest:write(src:read())
+			end
 			local fractal = love.filesystem.load("fractals/"..file)() -- TODO check errors
 			fractal.path = "fractals/"..file
 			table.insert(fractals,fractal)
