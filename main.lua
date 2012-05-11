@@ -1,5 +1,5 @@
 vector = require("vector3d")
-require("shaderGen")
+require("render")
 
 function love.load()
 	position = vector(-15, -15, 5)
@@ -21,13 +21,19 @@ function love.load()
 	loadedFract = 0
 	focus = true
 	printInfos = false
+
+	maxIterations = 50
+	threshold = 0.01
+	timeCheck = 0
+	lastModif = 0
 end
 
-function loadFract(fileName, dontChangeParams)
+function loadFract(fileName)
 	fract = love.filesystem.load("fractals/"..fileName)()
 	local code = fract.code
+	lastModif = love.filesystem.getLastModified("fractals/"..fileName)
 	if not code then return end
-	fractal = shaderGen.getPixelEffect(code)
+	fractal = render.getPixelEffect(code)
 	if(fract.name) then
 		love.graphics.setCaption("DEFract : "..fract.name)
 	else
@@ -35,13 +41,16 @@ function loadFract(fileName, dontChangeParams)
 	end
 	if(fract.position) then position = fract.position end
 	if(fract.direction) then direction = fract.direction end
+	if(fract.threshold) then threshold = fract.threshold end
+	if(fract.maxIterations) then maxIterations = fract.maxIterations end
 end
 
 function reloadFract()
 	fract = love.filesystem.load("fractals/"..fractFiles[loadedFract+1])()
+	lastModif = love.filesystem.getLastModified("fractals/"..fractFiles[loadedFract+1])
 	local code = fract.code
 	if not code then return end
-	fractal = shaderGen.getPixelEffect(code)
+	fractal = render.getPixelEffect(code)
 end
 
 function love.draw()
@@ -52,6 +61,9 @@ function love.draw()
 		love.graphics.print(fractal,0,15)
 		focus = false
 	else
+		fractal:send("maxIterations", maxIterations)
+		fractal:send("threshold",threshold)
+		
 		love.graphics.setPixelEffect(fractal)
 		normalizedDir = vectorFromSpherical(1,direction.theta,direction.phi)
 		origin = position+normalizedDir*projDist
@@ -71,11 +83,20 @@ function love.draw()
 			love.graphics.setColor(255,0,0)
 			love.graphics.print("position "..tostring(position),0,0)
 			love.graphics.print("direction : speed "..direction.speed.." phi "..direction.phi.." theta "..direction.theta,0,15)
+			love.graphics.print("maxIterations : "..maxIterations.." threshold "..threshold,0,30)
 		end
 	end
 end
 
 function love.update(dt)
+	timeCheck = timeCheck+dt
+	if(timeCheck >= 0.5) then
+		timeCheck = 0
+		if(lastModif ~= love.filesystem.getLastModified("fractals/"..fractFiles[loadedFract+1])) then
+			reloadFract()
+		end
+	end
+
 	if(love.keyboard.isDown("up")) then
 		dir = vectorFromSpherical(direction.speed, direction.theta, direction.phi)
 		position = position + dir*dt
@@ -95,6 +116,12 @@ function love.update(dt)
 	end
 	if(love.keyboard.isDown("right")) then
 		position = position + vectorFromSpherical(direction.speed, math.pi/2, direction.phi+math.pi/2)*dt
+	end
+	if(love.keyboard.isDown("home")) then
+		projDist = projDist+dt
+	end
+	if(love.keyboard.isDown("end")) then
+		projDist = projDist-dt
 	end
 	
 	if focus then
@@ -135,9 +162,15 @@ function vectorFromSpherical(r, theta, phi)
 end
 
 function love.mousepressed(x,y,button)
-	mouse.x,mouse.y = love.mouse.getX(),love.mouse.getY()
-	focus = true
-	love.mouse.setGrab(true)
-	love.mouse.setVisible(false)
-	reloadFract()
+	if button == "wu" then
+		maxIterations = maxIterations+4
+	elseif button == "wd" then
+		maxIterations = maxIterations-4
+	else
+		mouse.x,mouse.y = love.mouse.getX(),love.mouse.getY()
+		focus = true
+		love.mouse.setGrab(true)
+		love.mouse.setVisible(false)
+		reloadFract()
+	end
 end

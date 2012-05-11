@@ -1,13 +1,13 @@
-shaderGen = {
+render = {
 	codeHeader = [[
 extern vec3 position; // Position of the Eye
 extern vec3 origin; // origin of the projection plane
 extern vec3 planex;  // definition of the projection plane
 extern vec3 planey;
-float w = 800.0;     // Size of the window
-float h = 600.0;
-int maxIteration = 50; // Max number of rendering step
-float threshold = 0.001;// Limit to estimate that we touch the object
+float w = %f;     // Size of the window
+float h = %f;
+extern float maxIterations; // Max number of rendering step
+extern float threshold;// Limit to estimate that we touch the object
 ]],
 	codeRenderer = [[
 vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
@@ -19,22 +19,22 @@ vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
 	//p=position;
 	float distance = DE(p);
 	int i;
-	while((distance > threshold) && (i < maxIteration))
+	while((distance > threshold) && (i < maxIterations))
 	{
 		p = p+distance*d;
 		distance = DE(p);
 		i++;
 	}
 	float j = i;
-	float co = 1-j/maxIteration;
+	float co = 1-j/maxIterations;
 	return vec4(co);
 }
 ]]
 }
 
-function shaderGen.getPixelEffect(code)
+function render.getPixelEffect(code)
 	state, ret = pcall(function()
-		return love.graphics.newPixelEffect(shaderGen.codeHeader..code..shaderGen.codeRenderer)
+		return love.graphics.newPixelEffect((render.codeHeader):format(width,height)..code..render.codeRenderer)
 		end
 	)
 	return ret
