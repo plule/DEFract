@@ -9,7 +9,7 @@ windir=~/Downloads/love-0.8.0-win-x86
 osxapp=~/Downloads/love.app
 
 game=defract
-sources=*.lua
+sources=*.lua */*.lua
 res=
 
 .PHONY : run test love clean win

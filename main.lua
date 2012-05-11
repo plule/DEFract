@@ -46,8 +46,12 @@ end
 
 function loadParameters(fract)
 	currView = 1
-	if(fract.views[1].position) then position = fract.views[1].position end
-	if(fract.views[1].direction) then direction = fract.views[1].direction end
+	if(fract.views[1].position) then position = fract.views[1].position:clone() end
+	if(fract.views[1].direction) then
+		direction.speed = fract.views[1].direction.speed
+		direction.phi = fract.views[1].direction.phi
+		direction.theta = fract.views[1].direction.theta
+	end
 	if(fract.rt.threshold) then threshold = fract.rt.threshold end
 	if(fract.rt.maxIterations) then maxIterations = fract.rt.maxIterations end
 	mustRedraw = true
@@ -56,8 +60,12 @@ end
 function nextView()
 	currView = ((currView)%(#(currFract.views)))+1
 	local view = currFract.views[currView]
-	if(view.position) then position = view.position end
-	if(view.direction) then direction = view.direction end
+	if(view.position) then position = view.position:clone() end
+	if(view.direction) then
+		direction.speed = view.direction.speed
+		direction.phi = view.direction.phi
+		direction.theta = view.direction.theta
+	end
 	mustRedraw = true
 end
 
