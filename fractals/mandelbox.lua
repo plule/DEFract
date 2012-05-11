@@ -1,10 +1,13 @@
 return {
 	name="Mandelbox",
 	description="The Mandelbox (taken from http://blog.hvidtfeldts.net/index.php/2011/11/distance-estimated-3d-fractals-vi-the-mandelbox/)",
-	position=vector(-12, -28, 10),
-	maxIterations = 58,
-	threshold = 0.01,
-	direction = {speed=2, phi=1, theta=2},
+	views = {
+		{position = vector(-12, -28, 10), direction = {speed=2, phi=1, theta=2}},
+		{position = vector(-1.359,-8.363,5.480), direction = {speed=2, phi=1.55, theta=2.14}},
+	},
+	rt = {threshold=0.01,maxIterations=58},
+	hd = {threshold=0.002,maxIterations=70},
+	hq = {threshold=0.002,maxIterations=70},
 	code = [[
 float Scale=2;
 int Iterations = 10;    // Max iteration of the fractal generation

@@ -19,11 +19,13 @@ function love.load()
 		end
 	end
 	rtcanvas = love.graphics.newCanvas()
-	screenshotcanvas = love.graphics.newCanvas(1024,1024)
+	screenshotcanvas = love.graphics.newCanvas(unpack(render.hd.dim))
 	mustRedraw = true
 	mustRedrawHQ = true
 	love.graphics.setBackgroundColor(0,0,0)
-	currFract = 1
+	currFractNb = 1
+	currView = 1
+	currFract = fractals[currFractNb]
 	focus = true
 	printInfos = false
 	timeCheck = 0
@@ -31,52 +33,33 @@ function love.load()
 	maxIterations = 50
 	threshold = 0.01
 	
-	loadParameters(fractals[currFract])
+	loadParameters(currFract)
 end
-
---[[function loadFract(fileName)
-	fract = love.filesystem.load("fractals/"..fileName)()
-	local code = fract.code
-	lastModif = love.filesystem.getLastModified("fractals/"..fileName)
-	if not code then return end
-	fractal = render.getPixelEffect(code)
-	if(fract.name) then
-		love.graphics.setCaption("DEFract : "..fract.name)
-	else
-		love.graphics.setCaption("DEFract")
-	end
-	if(fract.position) then position = fract.position end
-	if(fract.direction) then direction = fract.direction end
-	if(fract.threshold) then threshold = fract.threshold end
-	if(fract.maxIterations) then maxIterations = fract.maxIterations end
-	mustRedraw = true
-end
-
-function reloadFract()
-	fract = love.filesystem.load("fractals/"..fractFiles[loadedFract+1])()
-	lastModif = love.filesystem.getLastModified("fractals/"..fractFiles[loadedFract+1])
-	local code = fract.code
-	if not code then return end
-	fractal = render.getPixelEffect(code)
-	mustRedraw = true
-end
-]]
 
 function loadParameters(fract)
-	if(fract.position) then position = fract.position end
-	if(fract.direction) then direction = fract.direction end
-	if(fract.threshold) then threshold = fract.threshold end
-	if(fract.maxIterations) then maxIterations = fract.maxIterations end
+	currView = 1
+	if(fract.views[1].position) then position = fract.views[1].position end
+	if(fract.views[1].direction) then direction = fract.views[1].direction end
+	if(fract.rt.threshold) then threshold = fract.rt.threshold end
+	if(fract.rt.maxIterations) then maxIterations = fract.rt.maxIterations end
+	mustRedraw = true
+end
+
+function nextView()
+	currView = ((currView)%(#(currFract.views)))+1
+	local view = currFract.views[currView]
+	if(view.position) then position = view.position end
+	if(view.direction) then direction = view.direction end
 	mustRedraw = true
 end
 
 function love.draw()
 	if mustRedraw then
-		render.renderTo(fractals[currFract], rtcanvas, render.rt)
+		render.renderTo(currFract, rtcanvas, "rt", maxIterations, threshold)
 		mustRedraw = false
 		mustRedrawHQ = true
 	elseif mustRedrawHQ then
-		render.renderTo(fractals[currFract], rtcanvas, render.hq)
+		render.renderTo(currFract, rtcanvas, "hq")
 		mustRedrawHQ = false
 	end
 	love.graphics.setColor(255,255,255)
@@ -94,9 +77,9 @@ function love.update(dt)
 	timeCheck = timeCheck+dt
 	if(timeCheck >= 0.5) then
 		timeCheck = 0
-		if lastModif ~= love.filesystem.getLastModified(fractals[currFract].path) then
-			lastModif = love.filesystem.getLastModified(fractals[currFract].path)
-			render.updateShader(fractals[currFract])
+		if lastModif ~= love.filesystem.getLastModified(currFract.path) then
+			lastModif = love.filesystem.getLastModified(currFract.path)
+			render.updateShader(currFract)
 			mustRedraw = true
 		end
 	end
@@ -140,7 +123,8 @@ function love.update(dt)
 		mustRedraw = true
 		direction.phi = direction.phi+(love.mouse.getX()-mouse.x)/100
 		direction.theta = direction.theta+(love.mouse.getY()-mouse.y)/100
-
+		if(direction.theta > math.pi) then direction.theta = math.pi end
+		if(direction.theta < 0) then direction.theta = 0 end
 		mouse.x,mouse.y = love.mouse.getX(),love.mouse.getY()
 		if mouse.x == 0 then mouse.x = width-2 end
 		if mouse.x == width-1 then mouse.x = 1 end
@@ -149,29 +133,35 @@ function love.update(dt)
 		love.mouse.setPosition(mouse.x, mouse.y)
 	end
 end
+--[[
+function getScreenShotIndex()
+	i = 1
+	while love.filesystem.exists("DEFract_"..i..".jpg") do
+		i = i+1
+	end
+	return i
+end
 
+function storeScreenShot(index)
+	render.renderTo
+end
+
+]]
 function love.keypressed(k,u)
 	if k == 'tab' then
-		currFract = ((currFract)%(#fractals))+1
-		loadParameters(fractals[currFract])
+		currFractNb = ((currFractNb)%(#fractals))+1
+		currFract = fractals[currFractNb]
+		loadParameters(currFract)
 	end
 	if k == 'f2' then
-		render.getPixelEffectForScreenShot(code, width, height)
-		screenshot = love.graphics.newScreenshot()
-		out = love.filesystem.newFile("out.png")
-		if out:open('w') then
-			if screenshot:encode(out) then
-				print("screenshot saved")
-			else
-				print("failed to write to screenshot file")
-			end
-			out:close()
-		else
-			print("failed to open screenshot file")
-		end
+		render.renderTo(currFract, screenshotcanvas, "hd")
+		screenshotcanvas:getImageData():encode("out.jpg")
 	end
 	if k == 'escape' then
 		love.event.quit()
+	end
+	if k == 'return' then
+		nextView()
 	end
 	if k== ' ' then
 		printInfos = not printInfos
@@ -198,7 +188,7 @@ function love.mousepressed(x,y,button)
 			mouse.x,mouse.y = love.mouse.getX(),love.mouse.getY()
 			love.mouse.setGrab(true)
 			love.mouse.setVisible(false)
-			render.updateShader(fractals[currFract])
+			render.updateShader(currFract)
 		else
 			love.mouse.setGrab(false)
 			love.mouse.setVisible(true)

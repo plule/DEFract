@@ -1,10 +1,12 @@
 return {
 	name="Kaleidoscopic IFS",
 	description="Taken from http://www.fractalforums.com/3d-fractal-generation/kaleidoscopic-%28escape-time-ifs%29/",
-	position=vector(1.64, 0.8, -0.3),
-	direction = {speed=2, phi=-2.66, theta=1.38},
-	maxIterations = 50,
-	threshold = 0.001,
+	views = {
+		{position=vector(1.64, 0.8, -0.3), direction = {speed=0.5, phi=-2.65, theta=1.3815}},
+	},
+	rt = {threshold = 0.001, maxIterations = 50},
+	hd = {threshold = 0.001, maxIterations = 70},
+	hq = {threshold = 0.001, maxIterations = 70},
 	code=[[
 int Iterations = 10;
 

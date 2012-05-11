@@ -2,9 +2,10 @@ vector = require("vector3d")
 
 render = {
 	rt = { dim = {love.graphics.getWidth(), love.graphics.getHeight()}},
-	hq = { dim = {love.graphics.getWidth(), love.graphics.getHeight()}},
+	hq = { dim = {love.graphics.getWidth(), love.graphics.getHeight()},
+		threshold=0.02,maxIterations=100},
 	hd = { dim = {1280,1024},
-		multiplicators = {threshold=1,maxIterations=10}},
+		threshold=0.02,maxIterations=100},
 	codeHeader = [[
 extern vec3 position; // Position of the Eye
 extern vec3 origin; // origin of the projection plane
@@ -42,10 +43,10 @@ function render.updateShader(fractal)
 	fractal.shaders = {}
 end
 
-function render.renderTo(fractal, canvas, preset)
+function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
 	fractal.shaders = fractal.shaders or {}
-	fractal.shaders[preset] = fractal.shaders[preset] or render.getPixelEffect(fractal.code, unpack(preset.dim))
-	local shader = fractal.shaders[preset]
+	fractal.shaders[quality] = fractal.shaders[quality] or render.getPixelEffect(fractal.code, unpack(render[quality].dim))
+	local shader = fractal.shaders[quality]
 	canvas:clear()
 	love.graphics.setCanvas(canvas)
 	if type(shader) == "string" then
@@ -55,17 +56,19 @@ function render.renderTo(fractal, canvas, preset)
 		love.graphics.print(shader,0,15)
 		focus = false
 	else
-		local width,height = unpack(preset.dim)
+		local width,height = unpack(render[quality].dim)
+		local preset = fractal[quality] or {}
 		love.graphics.setPixelEffect(shader)
-		preset.multiplicators = preset.multiplicators or {}
-		local maxIterationsMul = preset.multiplicators.maxIterations or 1
-		local thresholdMul = preset.multiplicators.threshold or 1
-		shader:send("maxIterations", maxIterations*maxIterationsMul)
-		shader:send("threshold",threshold*thresholdMul)
+		
+		local maxIterations = maxIterations or preset.maxIterations or render[quality].maxIterations
+		local threshold = threshold or preset.threshold or render[quality].threshold
+		shader:send("maxIterations", maxIterations)
+		shader:send("threshold",threshold)
 		
 		love.graphics.setPixelEffect(shader)
 		local normalizedDir = vectorFromSpherical(1,direction.theta,direction.phi)
-		local origin = position+normalizedDir*projDist
+		local ratio = height/render.rt.dim[2]
+		local origin = position+normalizedDir*projDist*ratio
 		shader:send("position", {position:unpack()})
 		shader:send("origin", {origin:unpack()})
 		
@@ -74,9 +77,9 @@ function render.renderTo(fractal, canvas, preset)
 		
 		local planex = vectorFromSpherical(width/1000,math.pi/2, direction.phi+math.pi/2)
 		shader:send("planex", {planex:unpack()})
-		love.graphics.setColor(0,0,0)
+		love.graphics.setColor(0,0,0,255)
 		love.graphics.rectangle("fill",0,0,width,height)
-		love.graphics.setColor(255,255,255)
+		love.graphics.setColor(255,255,255,255)
 		love.graphics.setPixelEffect()
 	end
 	love.graphics.setCanvas()

@@ -1,10 +1,12 @@
 return {
 	name="Menger Sponge",
 	description="Taken from http://snipplr.com/view/33781/",
-	position=vector(3, -2.5, 2.2),
-	direction = {speed=2, phi=-3.94, theta=2.28},
-	maxIterations = 80,
-	threshold = 0.001,
+	views = {
+		{position=vector(3, -2.5, 2.2), direction = {speed=2, phi=-3.94, theta=2.28}},
+	},
+	rt = {maxIterations = 80, threshold = 0.001},
+	hd = {maxIterations = 80, threshold = 0.001},
+	hq = {maxIterations = 80, threshold = 0.001},
 	code=[[
 float DE(vec3 z0)
 {
