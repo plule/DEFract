@@ -1,2 +1,51 @@
+DEFract - A 3D fractal visualisator
+===================================
+
 The goal of this is to generate real-time 3D pics from distance estimator functions.
-Currently there is nothing to see.
+
+It uses [LÖVE](https://love2d.org/) and GLSL.
+
+What can DEFract do?
+--------------------
+
+Currently you can :
+ * Explore 3D fractals (yay!)
+ * Edit in real-time the code of the fractals (you save, the fractal is refreshed)
+ * Switch between pre-defined views
+ * Save screenshot, with the position of the view associated
+
+How can I do this?
+------------------
+
+First, launch the program (you can either run the .exe, the app, or you can install [LÖVE](https://love2d.org/) and run the .love.
+
+Then, you might see a black screen, try to move your mouse to find something.
+
+### Keybinding :
+ * Arrows to move
+ * pagup/pagdown to go up/down
+ * Mouse to look around
+ * Click to get/lost focus
+ * Return to switch between predefined views (if any)
+ * Tab to switch between fractals
+ * scroll to change the number of iterations of the renderer (try this if everything is too dark)
+
+What ressources have been used?
+-------------------------------
+
+Mainly, LÖVE is used. The vector class from [hump library](vrld.github.com/hump/) has been partially adaptated for 3D operations.
+
+For the knowledge, the main source is [an awesome serie of blog entries](http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/) that everyone should read.
+
+Also, formulas from [fractal forums](www.fractalforums.com/) where taken.
+
+What is missing?
+----------------
+
+ * Better render for screenshots
+ * Faster render for real-time
+ * Better control
+ * Automatic save of the views in the file
+ * Alot of bugs/crashes are still present
+ * MOAR FRACTALS
+ * 2D support (why not?)
