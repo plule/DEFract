@@ -4,9 +4,9 @@ return {
 	views = {
 		{position=vector(3, -2.5, 2.2), direction = {speed=2, phi=-3.94, theta=2.28}},
 	},
-	rt = {maxIterations = 80, threshold = 0.001},
-	hd = {maxIterations = 80, threshold = 0.001},
-	hq = {maxIterations = 80, threshold = 0.001},
+	rt = {maxIterations = 200, threshold = 0.001},
+	hd = {maxIterations = 600, threshold = 0.00001},
+	hq = {maxIterations = 600, threshold = 0.00001},
 	code=[[
 float DE(vec3 z0)
 {
