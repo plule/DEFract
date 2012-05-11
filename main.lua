@@ -17,7 +17,9 @@ function love.load()
 		end
 	end
 	rtcanvas = love.graphics.newCanvas()
+	screenshotcanvas = love.graphics.newCanvas(1024,1024)
 	mustRedraw = true
+	mustRedrawHQ = true
 	love.graphics.setBackgroundColor(0,0,0)
 	loadFract(fractFiles[1])
 	loadedFract = 0
@@ -68,6 +70,14 @@ function love.draw()
 		if mustRedraw then
 			rtcanvas:clear()
 			rtcanvas:renderTo(drawer)
+			mustRedraw = false
+			mustRedrawHQ = true
+		elseif mustRedrawHQ then
+			oldthreshold, oldmaxIterations = threshold, maxIterations
+			threshold = threshold/10, maxIterations*10
+			rtcanvas:renderTo(drawer)
+			threshold, maxIterations = oldthreshold, oldmaxIterations
+			mustRedrawHQ = false
 		end
 		love.graphics.setColor(255,255,255)
 		love.graphics.draw(rtcanvas,0,0)
@@ -99,7 +109,6 @@ function drawer()
 	love.graphics.setColor(0,0,0)
 	love.graphics.rectangle("fill",0,0,width,height)
 	love.graphics.setColor(255,255,255)
-	mustRedraw = false
 	love.graphics.setPixelEffect()
 end
 
