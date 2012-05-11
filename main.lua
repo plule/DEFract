@@ -45,6 +45,7 @@ function loadFract(fileName)
 	if(fract.direction) then direction = fract.direction end
 	if(fract.threshold) then threshold = fract.threshold end
 	if(fract.maxIterations) then maxIterations = fract.maxIterations end
+	mustRedraw = true
 end
 
 function reloadFract()
@@ -53,6 +54,7 @@ function reloadFract()
 	local code = fract.code
 	if not code then return end
 	fractal = render.getPixelEffect(code)
+	mustRedraw = true
 end
 
 function love.draw()
@@ -64,37 +66,41 @@ function love.draw()
 		focus = false
 	else
 		if mustRedraw then
-			print("redrawing")
-			love.graphics.setCanvas(rtcanvas)
-			fractal:send("maxIterations", maxIterations)
-			fractal:send("threshold",threshold)
-			
-			love.graphics.setPixelEffect(fractal)
-			normalizedDir = vectorFromSpherical(1,direction.theta,direction.phi)
-			origin = position+normalizedDir*projDist
-			fractal:send("position", {position:unpack()})
-			fractal:send("origin", {origin:unpack()})
-			
-			planey = vectorFromSpherical(height/1000,direction.theta-math.pi/2, direction.phi)
-			fractal:send("planey", {planey:unpack()})
-			
-			planex = vectorFromSpherical(width/1000,math.pi/2, direction.phi+math.pi/2)
-			fractal:send("planex", {planex:unpack()})
-			love.graphics.setColor(0,0,0)
-			love.graphics.rectangle("fill",0,0,width,height)
-			love.graphics.setColor(255,255,255)
-			if printInfos then
-				love.graphics.setPixelEffect()
-				love.graphics.setColor(255,0,0)
-				love.graphics.print("position "..tostring(position),0,0)
-				love.graphics.print("direction : speed "..direction.speed.." phi "..direction.phi.." theta "..direction.theta,0,15)
-				love.graphics.print("maxIterations : "..maxIterations.." threshold "..threshold,0,30)
-			end
-			mustRedraw = false
-			love.graphics.setCanvas()
+			rtcanvas:clear()
+			rtcanvas:renderTo(drawer)
 		end
+		love.graphics.setColor(255,255,255)
 		love.graphics.draw(rtcanvas,0,0)
+		if printInfos then
+			love.graphics.setPixelEffect()
+			love.graphics.setColor(255,0,0)
+			love.graphics.print("position "..tostring(position),0,0)
+			love.graphics.print("direction : speed "..direction.speed.." phi "..direction.phi.." theta "..direction.theta,0,15)
+			love.graphics.print("maxIterations : "..maxIterations.." threshold "..threshold,0,30)
+		end
 	end
+end
+
+function drawer()
+	fractal:send("maxIterations", maxIterations)
+	fractal:send("threshold",threshold)
+	
+	love.graphics.setPixelEffect(fractal)
+	normalizedDir = vectorFromSpherical(1,direction.theta,direction.phi)
+	origin = position+normalizedDir*projDist
+	fractal:send("position", {position:unpack()})
+	fractal:send("origin", {origin:unpack()})
+	
+	planey = vectorFromSpherical(height/1000,direction.theta-math.pi/2, direction.phi)
+	fractal:send("planey", {planey:unpack()})
+	
+	planex = vectorFromSpherical(width/1000,math.pi/2, direction.phi+math.pi/2)
+	fractal:send("planex", {planex:unpack()})
+	love.graphics.setColor(0,0,0)
+	love.graphics.rectangle("fill",0,0,width,height)
+	love.graphics.setColor(255,255,255)
+	mustRedraw = false
+	love.graphics.setPixelEffect()
 end
 
 function love.update(dt)
@@ -159,16 +165,26 @@ function love.keypressed(k,u)
 	if k == 'tab' then
 		loadedFract = (loadedFract+1)%(#fractFiles)
 		loadFract(fractFiles[loadedFract+1])
-		mustRedraw = true
 	end
 	if k == 'f5' then
 		reloadFract()
-		mustRedraw = true
+	end
+	if k == 'f2' then
+		screenshot = love.graphics.newScreenshot()
+		out = love.filesystem.newFile("out.png")
+		if out:open('w') then
+			if screenshot:encode(out) then
+				print("screenshot saved")
+			else
+				print("failed to write to screenshot file")
+			end
+			out:close()
+		else
+			print("failed to open screenshot file")
+		end
 	end
 	if k == 'escape' then
-		love.mouse.setGrab(false)
-		love.mouse.setVisible(true)
-		focus = false
+		love.event.quit()
 	end
 	if k== ' ' then
 		printInfos = not printInfos
@@ -190,11 +206,15 @@ function love.mousepressed(x,y,button)
 		maxIterations = maxIterations-4
 		mustRedraw = true
 	else
-		mouse.x,mouse.y = love.mouse.getX(),love.mouse.getY()
-		focus = true
-		love.mouse.setGrab(true)
-		love.mouse.setVisible(false)
-		reloadFract()
-		mustRedraw = true
+		focus = not focus
+		if focus then
+			mouse.x,mouse.y = love.mouse.getX(),love.mouse.getY()
+			love.mouse.setGrab(true)
+			love.mouse.setVisible(false)
+			reloadFract()
+		else
+			love.mouse.setGrab(false)
+			love.mouse.setVisible(true)
+		end
 	end
 end
