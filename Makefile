@@ -56,6 +56,7 @@ lin64 : $(builddir)/$(game)-x86_64
 $(builddir)/$(game).app : $(builddir)/$(game).love
 	cp -a $(osxapp) $(builddir)/$(game).app
 	cp $(builddir)/$(game).love $(builddir)/$(game).app/Contents/Resources/
+	cp $(readme) $(builddir)/$(game).app
 
 $(builddir)/$(game).exe : $(builddir)/$(game).love
 	cat $(windir)/love.exe $(builddir)/$(game).love > $(builddir)/$(game).exe
