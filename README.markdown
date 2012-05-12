@@ -12,11 +12,18 @@ Get latest update on [github](https://github.com/PierreLu/DEFract).
 What can DEFract do?
 --------------------
 
+THIS :
+
+![Mechanical madness](https://github.com/PierreLu/DEFract/blob/master/renders/DEFract_12.jpg?raw=true)
+
 Currently you can :
  * Explore 3D fractals (yay!) (even animated one)
  * Edit in real-time the code of the fractals (you save, the fractal is refreshed)
  * Switch between pre-defined views
  * Save screenshot, with the position of the view associated
+ * Record animation
+
+![Animated menger sponge](https://github.com/PierreLu/DEFract/blob/master/renders/psyche2.gif?raw=true)
 
 How can I do this?
 ------------------
@@ -37,6 +44,8 @@ Then, you might see a black screen, try to move your mouse to find something.
  * Tab to switch between fractals
  * scroll to change the number of iterations of the renderer (try this if everything is too dark, or too blobby or whatever)
  * F2 to take a screenshot. It will be store in the LÖVE saving directory. You can find this directory by pressing "space"
+ * F3 to start recording. It will be stored as a lot of jpgs. Be careful of your disk space.
+ * F4 to slow down time. Useful for recording.
  * Space to display informations
  * Escape to exit
 
@@ -64,4 +73,5 @@ What is missing?
  * MOAR FRACTALS
  * 2D support (why not?)
 
-![Mechanical madness](https://github.com/PierreLu/DEFract/blob/master/renders/DEFract_12.jpg?raw=true)
+Hey. Last one :
+![Mandelbox](https://github.com/PierreLu/DEFract/blob/master/renders/DEFract_3.jpg?raw=true)
