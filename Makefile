@@ -50,7 +50,7 @@ lin32 : $(builddir)/$(game)-i686
 lin64 : $(builddir)/$(game)-x86_64
 	mkdir -p $(distdir)/$(distname)
 	cp $(builddir)/$(game)-i686 $(readme) $(distdir)/$(distname)
-	cd $(distdir); zip -q -r $(distname)-i686.lin.zip $(distname)
+	cd $(distdir); zip -q -r $(distname)-x86_64.lin.zip $(distname)
 	rm -rf $(distdir)/$(distname)
 
 $(builddir)/$(game).app : $(builddir)/$(game).love
