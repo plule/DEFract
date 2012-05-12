@@ -60,7 +60,7 @@ I (Pierre Lulé) made the navigation and the rendering.
 
 For the science behind this, the main source is [an awesome serie of blog entries](http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/) that everyone should read.
 
-The fractals' definitions are from this blog and [fractal forums](www.fractalforums.com/).
+The fractals' definitions are from this blog and [fractal forums](http://www.fractalforums.com/).
 
 What is missing?
 ----------------
