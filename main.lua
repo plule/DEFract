@@ -72,7 +72,7 @@ function loadParameters(fract)
 		direction.phi = fract.views[1].direction.phi
 		direction.theta = fract.views[1].direction.theta
 	end
-	love.graphics.setCaption("DEFract : "..fract.path)
+	love.graphics.setCaption("DEFract 0.1 : "..fract.path)
 	mustRedraw = true
 end
 
