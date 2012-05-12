@@ -1,11 +1,11 @@
 DEFract - A 3D fractal visualisator - v0.1
 ==========================================
 
-The goal of this is to generate real-time 3D pics from distance estimator functions.
+The goal of this soft is to generate real-time 3D pics from distance estimator functions.
 
 It uses [LÖVE](https://love2d.org/) and GLSL.
 
-It cannot be considered as stable. Use at your own risk. I can't be held responsible if your gpu burns.
+Do not think this is stable. Use at your own risk. I can't be held responsible if your gpu burns.
 
 Get latest update on [github](https://github.com/PierreLu/DEFract).
 
@@ -20,17 +20,17 @@ Currently you can :
  * Explore 3D fractals (yay!) (even animated one)
  * Edit in real-time the code of the fractals (you save, the fractal is refreshed)
  * Switch between pre-defined views
- * Save screenshot, with the position of the view associated
- * Record animation
+ * Save screenshots and all the infos someone need to reproduce your screenshot
+ * Record animations
 
 ![Animated menger sponge](https://github.com/PierreLu/DEFract/blob/master/renders/psyche2.gif?raw=true)
 
 How can I do this?
 ------------------
 
-First, launch the program (you can either run the .exe, the app, the linux exec or you can install [LÖVE](https://love2d.org/) and run the .love. Note that it has been tested only on a 32b linux and a 32b windows. If you have any trouble, install LÖVE and run the .love.
+First, launch the program. To do this, you can either run the .exe, the .app, the linux exec or you can install [LÖVE](https://love2d.org/) and run the .love. Note that it has been tested only on a 32b linux and a 32b windows. If you have any trouble, install LÖVE and run the .love.
 
-Under Linux, you will probably need LÖVE dependancies : devil, luajit, openal, physfs, sdl, libvorbis, mpg123.
+Under Linux, you will probably need LÖVE dependencies : devil, luajit, openal, physfs, sdl, libvorbis, mpg123.
 
 Then, you might see a black screen, try to move your mouse to find something.
 
@@ -49,7 +49,7 @@ Then, you might see a black screen, try to move your mouse to find something.
  * Space to display informations
  * Escape to exit
 
-Go to the LÖVE saving directory and play with the code of the fractal you are seeing. You can see your modification just when you save. Really, you should do this on the rotated menger. You can use the variable "time" if you want animated things.
+Go to the LÖVE saving directory (displayed with "space" key) and play with the code of the fractal you are seeing. You can see your modification just when you save. Really, you should do this on the rotated menger. You can use the variable "time" if you want animated things.
 
 What ressources have been used?
 -------------------------------
@@ -58,7 +58,7 @@ Mainly, LÖVE is used. The vector class from [hump library](vrld.github.com/hump
 
 I (Pierre Lulé) made the navigation and the rendering.
 
-For the knowledge, the main source is [an awesome serie of blog entries](http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/) that everyone should read.
+For the science behind this, the main source is [an awesome serie of blog entries](http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/) that everyone should read.
 
 The fractals' definitions are from this blog and [fractal forums](www.fractalforums.com/).
 
