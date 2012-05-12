@@ -54,7 +54,7 @@ Go to the LÖVE saving directory (displayed with "space" key) and play with the 
 What ressources have been used?
 -------------------------------
 
-Mainly, LÖVE is used. The vector class from [hump library](vrld.github.com/hump/) has been partially adaptated for 3D operations.
+Mainly, LÖVE is used. The vector class from [hump library](http://vrld.github.com/hump/) has been partially adaptated for 3D operations.
 
 I (Pierre Lulé) made the navigation and the rendering.
 
