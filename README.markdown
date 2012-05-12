@@ -63,3 +63,5 @@ What is missing?
  * Alot of bugs/crashes are still present
  * MOAR FRACTALS
  * 2D support (why not?)
+
+![Mechanical madness](https://github.com/PierreLu/DEFract/blob/master/renders/DEFract_12.jpg?raw=true)
