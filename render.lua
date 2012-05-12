@@ -68,8 +68,8 @@ function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
 		
 		local maxIterations = maxIterations or preset.maxIterations or render[quality].maxIterations
 		local threshold = threshold or preset.threshold or render[quality].threshold
-		shader:send("maxIterations", maxIterations)
-		shader:send("threshold",threshold)
+		shader:send("maxIterations", maxIterations*maxIterationsMulti)
+		shader:send("threshold",threshold*thresholdMulti)
 		
 		love.graphics.setPixelEffect(shader)
 		local normalizedDir = vectorFromSpherical(1,direction.theta,direction.phi)

@@ -46,10 +46,10 @@ function love.load()
 	printInfos = false
 	timeCheck = 0
 	lastModif = 0
-	maxIterations = 50
-	threshold = 0.01
 	animatedFractal = false
 	currTime = 0
+	thresholdMulti = 1
+	maxIterationsMulti = 1
 	loadParameters(currFract)
 end
 
@@ -71,8 +71,6 @@ function loadParameters(fract)
 		direction.phi = fract.views[1].direction.phi
 		direction.theta = fract.views[1].direction.theta
 	end
-	if(fract.rt.threshold) then threshold = fract.rt.threshold end
-	if(fract.rt.maxIterations) then maxIterations = fract.rt.maxIterations end
 	love.graphics.setCaption("DEFract : "..fract.path)
 	mustRedraw = true
 end
@@ -91,7 +89,7 @@ end
 
 function love.draw()
 	if mustRedraw or animatedFractal then
-		render.renderTo(currFract, rtcanvas, "rt", maxIterations, threshold)
+		render.renderTo(currFract, rtcanvas, "rt")
 		mustRedraw = false
 		mustRedrawHQ = true
 	elseif mustRedrawHQ then
@@ -105,7 +103,7 @@ function love.draw()
 		love.graphics.setColor(255,0,0)
 		love.graphics.print("position "..tostring(position),0,0)
 		love.graphics.print("direction : speed "..direction.speed.." phi "..direction.phi.." theta "..direction.theta,0,15)
-		love.graphics.print("maxIterations : "..maxIterations.." threshold "..threshold,0,30)
+		love.graphics.print("maxIterations : "..currFract.rt.maxIterations*maxIterationsMulti.." threshold "..currFract.rt.threshold*thresholdMulti,0,30)
 	end
 end
 
@@ -148,14 +146,6 @@ function love.update(dt)
 		position = position + vectorFromSpherical(direction.speed, math.pi/2, direction.phi+math.pi/2)*dt
 		mustRedraw = true
 	end
-	if(love.keyboard.isDown("home")) then
-		projDist = projDist+dt
-		mustRedraw = true
-	end
-	if(love.keyboard.isDown("end")) then
-		projDist = projDist-dt
-		mustRedraw = true
-	end
 	
 	if focus and (mouse.x ~= love.mouse.getX() or mouse.y ~= love.mouse.getY()) then
 		mustRedraw = true
@@ -192,7 +182,11 @@ maxIterations : %i
 code :
 %s
 	]]
-	content = content:format(tostring(position), direction.speed, direction.phi, direction.theta, currFract.path, threshold, maxIterations, currFract.code)
+	content = content:format(tostring(position), direction.speed,
+			direction.phi, direction.theta, currFract.path,
+			currFract.hd.threshold*thresholdMulti,
+			currFract.hd.maxIterations*maxIterationsMulti,
+			currFract.code)
 	description:write(content)
 	description:close()
 end
@@ -201,6 +195,8 @@ function love.keypressed(k,u)
 	if k == 'tab' then
 		currFractNb = ((currFractNb)%(#fractals))+1
 		currFract = fractals[currFractNb]
+		maxIterationsMulti = 1
+		thresholdMulti = 1
 		loadParameters(currFract)
 	end
 	if k == 'f2' then
@@ -226,10 +222,12 @@ end
 
 function love.mousepressed(x,y,button)
 	if button == "wu" then
-		maxIterations = maxIterations+4
+		maxIterationsMulti = maxIterationsMulti*1.2
+		thresholdMulti = thresholdMulti/2
 		mustRedraw = true
 	elseif button == "wd" then
-		maxIterations = maxIterations-4
+		maxIterationsMulti = maxIterationsMulti/1.2
+		thresholdMulti = thresholdMulti*2
 		mustRedraw = true
 	else
 		focus = not focus
