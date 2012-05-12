@@ -1,9 +1,13 @@
-DEFract - A 3D fractal visualisator
-===================================
+DEFract - A 3D fractal visualisator - v0.0
+==========================================
 
 The goal of this is to generate real-time 3D pics from distance estimator functions.
 
 It uses [LÖVE](https://love2d.org/) and GLSL.
+
+It cannot be considered as stable. Use at your own risk. I can't be held responsible if your gpu burns.
+
+Get latest update on [github](https://github.com/PierreLu/DEFract).
 
 What can DEFract do?
 --------------------
@@ -17,11 +21,13 @@ Currently you can :
 How can I do this?
 ------------------
 
-First, launch the program (you can either run the .exe, the app, or you can install [LÖVE](https://love2d.org/) and run the .love.
+First, launch the program (you can either run the .exe, the app, the linux exec or you can install [LÖVE](https://love2d.org/) and run the .love. Note that it has been tested only on a 32b linux and a 32b windows. If you have any trouble, install LÖVE and run the .love.
+
+Under Linux, you will probably need LÖVE dependancies : devil, luajit, openal, physfs, sdl, libvorbis, mpg123.
 
 Then, you might see a black screen, try to move your mouse to find something.
 
-### Keybinding :
+### Keybindings :
  * Arrows to move
  * pageup/pagedown to change speed
  * Mouse to look around
@@ -30,7 +36,7 @@ Then, you might see a black screen, try to move your mouse to find something.
  * Return to switch between predefined views (if any)
  * Tab to switch between fractals
  * scroll to change the number of iterations of the renderer (try this if everything is too dark, or too blobby or whatever)
- * F2 to take a screenshot. It will be store in the LÖVE saving directory. You can find this directory by pressing...
+ * F2 to take a screenshot. It will be store in the LÖVE saving directory. You can find this directory by pressing "space"
  * Space to display informations
  * Escape to exit
 
@@ -38,6 +44,8 @@ What ressources have been used?
 -------------------------------
 
 Mainly, LÖVE is used. The vector class from [hump library](vrld.github.com/hump/) has been partially adaptated for 3D operations.
+
+I (Pierre Lulé) made the navigation and the rendering.
 
 For the knowledge, the main source is [an awesome serie of blog entries](http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/) that everyone should read.
 
