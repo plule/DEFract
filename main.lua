@@ -190,8 +190,11 @@ code :
 	description:write(content)
 	description:close()
 end
-
+function love.keyreleased(k,u)
+	if k == 'lctrl' then mustRedraw = true end
+end
 function love.keypressed(k,u)
+	if k == 'lctrl' then mustRedraw = true end
 	if k == 'tab' then
 		currFractNb = ((currFractNb)%(#fractals))+1
 		currFract = fractals[currFractNb]

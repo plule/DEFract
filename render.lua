@@ -73,7 +73,9 @@ function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
 		
 		love.graphics.setPixelEffect(shader)
 		local normalizedDir = vectorFromSpherical(1,direction.theta,direction.phi)
-		local ratio = height/render.rt.dim[2]
+		ratio = height/render.rt.dim[2]
+		
+		if love.keyboard.isDown("lctrl") then ratio = ratio*10 end
 		local origin = position+normalizedDir*projDist*ratio
 		shader:send("position", {position:unpack()})
 		shader:send("origin", {origin:unpack()})
