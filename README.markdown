@@ -13,7 +13,7 @@ What can DEFract do?
 --------------------
 
 Currently you can :
- * Explore 3D fractals (yay!)
+ * Explore 3D fractals (yay!) (even animated one)
  * Edit in real-time the code of the fractals (you save, the fractal is refreshed)
  * Switch between pre-defined views
  * Save screenshot, with the position of the view associated
@@ -39,6 +39,8 @@ Then, you might see a black screen, try to move your mouse to find something.
  * F2 to take a screenshot. It will be store in the LÖVE saving directory. You can find this directory by pressing "space"
  * Space to display informations
  * Escape to exit
+
+Go to the LÖVE saving directory and play with the code of the fractal you are seeing. You can see your modification just when you save. Really, you should do this on the rotated menger. You can use the variable "time" if you want animated things.
 
 What ressources have been used?
 -------------------------------
