@@ -50,6 +50,7 @@ function love.load()
 	currTime = 0
 	thresholdMulti = 1
 	maxIterationsMulti = 1
+	zoom = 1
 	loadParameters(currFract)
 end
 
@@ -131,12 +132,10 @@ function love.update(dt)
 		mustRedraw = true
 	end
 	if(love.keyboard.isDown("pageup")) then
-		position.z = position.z + direction.speed*dt
-		mustRedraw = true
+		direction.speed = direction.speed+direction.speed*dt*3
 	end
 	if(love.keyboard.isDown("pagedown")) then
-		position.z = position.z - direction.speed*dt
-		mustRedraw = true
+		direction.speed = direction.speed-direction.speed*dt*3
 	end
 	if(love.keyboard.isDown("left")) then
 		position = position + vectorFromSpherical(direction.speed, math.pi/2, direction.phi-math.pi/2)*dt
@@ -191,10 +190,16 @@ code :
 	description:close()
 end
 function love.keyreleased(k,u)
-	if k == 'lctrl' then mustRedraw = true end
+	if k == 'lctrl' then
+		zoom = 1
+		mustRedraw = true
+	end
 end
 function love.keypressed(k,u)
-	if k == 'lctrl' then mustRedraw = true end
+	if k == 'lctrl' then
+		zoom = 10
+		mustRedraw = true
+	end
 	if k == 'tab' then
 		currFractNb = ((currFractNb)%(#fractals))+1
 		currFract = fractals[currFractNb]

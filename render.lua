@@ -75,8 +75,7 @@ function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
 		local normalizedDir = vectorFromSpherical(1,direction.theta,direction.phi)
 		ratio = height/render.rt.dim[2]
 		
-		if love.keyboard.isDown("lctrl") then ratio = ratio*10 end
-		local origin = position+normalizedDir*projDist*ratio
+		local origin = position+normalizedDir*projDist*ratio*zoom
 		shader:send("position", {position:unpack()})
 		shader:send("origin", {origin:unpack()})
 		
