@@ -23,12 +23,16 @@ Then, you might see a black screen, try to move your mouse to find something.
 
 ### Keybinding :
  * Arrows to move
- * pagup/pagdown to go up/down
+ * pageup/pagedown to change speed
  * Mouse to look around
- * Click to get/lost focus
+ * left control to zoom
+ * Click to get/lose focus
  * Return to switch between predefined views (if any)
  * Tab to switch between fractals
- * scroll to change the number of iterations of the renderer (try this if everything is too dark)
+ * scroll to change the number of iterations of the renderer (try this if everything is too dark, or too blobby or whatever)
+ * F2 to take a screenshot. It will be store in the LÖVE saving directory. You can find this directory by pressing...
+ * Space to display informations
+ * Escape to exit
 
 What ressources have been used?
 -------------------------------
@@ -37,7 +41,7 @@ Mainly, LÖVE is used. The vector class from [hump library](vrld.github.com/hump
 
 For the knowledge, the main source is [an awesome serie of blog entries](http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/) that everyone should read.
 
-Also, formulas from [fractal forums](www.fractalforums.com/) where taken.
+The fractals' definitions are from this blog and [fractal forums](www.fractalforums.com/).
 
 What is missing?
 ----------------
