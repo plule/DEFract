@@ -13,6 +13,7 @@ function love.load()
 	love.mouse.setVisible(false)
 	fractals = {}
 	love.filesystem.mkdir("fractals")
+	love.filesystem.mkdir("records")
 	examples = love.filesystem.enumerate("examples")
 	for _,file in ipairs(love.filesystem.enumerate("fractals")) do
 		for i,example in ipairs(examples) do
@@ -39,6 +40,9 @@ function love.load()
 	screenshotcanvas = love.graphics.newCanvas(unpack(render.hd.dim))
 	mustRedraw = true
 	mustRedrawHQ = true
+	recording = false
+	slowTime = false
+	recordFolder = ""
 	love.graphics.setBackgroundColor(0,0,0)
 	currFractNb = 1
 	currView = 1
@@ -72,7 +76,7 @@ function loadParameters(fract)
 		direction.phi = fract.views[1].direction.phi
 		direction.theta = fract.views[1].direction.theta
 	end
-	love.graphics.setCaption("DEFract 0.1 : "..fract.path)
+	love.graphics.setCaption("DEFract 0.2 : "..fract.path)
 	mustRedraw = true
 end
 
@@ -97,24 +101,35 @@ function love.draw()
 		render.renderTo(currFract, rtcanvas, "hq")
 		mustRedrawHQ = false
 	end
+	if recording then
+		rtcanvas:getImageData():encode(recordFolder..("/%04d.jpg"):format(lastFrameNb))
+		lastFrameNb = lastFrameNb+1
+	end
 	love.graphics.setColor(255,255,255)
 	love.graphics.draw(rtcanvas,0,0)
+	love.graphics.setPixelEffect()
+	if recording then
+		love.graphics.setColor(255,0,0)
+		love.graphics.circle("fill", width-15, 15, 5)
+	end
 	if love.keyboard.isDown(' ') then
-		love.graphics.setPixelEffect()
 		love.graphics.setColor(0,255,0)
 		love.graphics.print("position "..tostring(position),0,0)
 		love.graphics.print(("direction : speed %04f phi %04f theta %04f"):format(direction.speed,direction.phi,direction.theta),0,15)
 		love.graphics.print(("maxIterations : %d threshold : %04f"):format(currFract.rt.maxIterations*maxIterationsMulti, currFract.rt.threshold*thresholdMulti),0,30)
 		love.graphics.print(love.filesystem.getSaveDirectory().."/"..currFract.path,0,45)
 	elseif love.keyboard.isDown('pageup') or love.keyboard.isDown('pagedown') then
-		love.graphics.setPixelEffect()
 		love.graphics.setColor(0,255,0)
 		love.graphics.print(("speed : %04f"):format(direction.speed),0,0)
 	end
 end
 
 function love.update(dt)
-	currTime = currTime+dt
+	if slowTime then
+		currTime = currTime+dt/2
+	else
+		currTime = currTime+dt
+	end
 	timeCheck = timeCheck+dt
 	if(timeCheck >= 0.5) then
 		timeCheck = 0
@@ -166,15 +181,8 @@ function love.update(dt)
 	end
 end
 
-function storeScreenShot()
-	local i = 1
-	while love.filesystem.exists("DEFract_"..i..".jpg") do
-		i = i+1
-	end
-	local name = "DEFract_"..i
-	render.renderTo(currFract, screenshotcanvas, "hd")
-	screenshotcanvas:getImageData():encode(name..".jpg")
-	local description = love.filesystem.newFile(name..".txt")
+function storeInfos(path)
+	local description = love.filesystem.newFile(path)
 	description:open('w')
 	content = [[
 {position=vector%s, direction = {speed=%f, phi=%f, theta=%f}},
@@ -194,6 +202,36 @@ code :
 	description:write(content)
 	description:close()
 end
+
+function storeScreenShot()
+	local i = 1
+	while love.filesystem.exists("DEFract_"..i..".jpg") do
+		i = i+1
+	end
+	local name = "DEFract_"..i
+	render.renderTo(currFract, screenshotcanvas, "hd")
+	screenshotcanvas:getImageData():encode(name..".jpg")
+	storeInfos(name..".txt")
+end
+
+function startRecording()
+	local i = 1
+	while love.filesystem.exists("records/"..i) do
+		i = i+1
+	end
+	recordFolder = "records/"..i
+	love.filesystem.mkdir(recordFolder)
+	storeInfos(recordFolder.."/infos.txt")
+	lastFrameNb = 0
+	recording = true
+end
+
+function stopRecording()
+	recording = false
+	lastFrameNb = 0
+	recordFolder = ""
+end
+
 function love.keyreleased(k,u)
 	if k == 'lctrl' then
 		zoom = 1
@@ -214,6 +252,16 @@ function love.keypressed(k,u)
 	end
 	if k == 'f2' then
 		storeScreenShot()
+	end
+	if k == 'f3' then
+		if recording then
+			stopRecording()
+		else
+			startRecording()
+		end
+	end
+	if k == 'f4' then
+		slowTime = not slowTime
 	end
 	if k == 'escape' then
 		love.event.quit()
