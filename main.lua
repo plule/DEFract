@@ -98,12 +98,17 @@ function love.draw()
 	end
 	love.graphics.setColor(255,255,255)
 	love.graphics.draw(rtcanvas,0,0)
-	if love.keyboard.isDown(' ') or love.keyboard.isDown('pageup') or love.keyboard.isDown('pagedown') then
+	if love.keyboard.isDown(' ') then
 		love.graphics.setPixelEffect()
 		love.graphics.setColor(0,255,0)
 		love.graphics.print("position "..tostring(position),0,0)
 		love.graphics.print(("direction : speed %04f phi %04f theta %04f"):format(direction.speed,direction.phi,direction.theta),0,15)
 		love.graphics.print(("maxIterations : %d threshold : %04f"):format(currFract.rt.maxIterations*maxIterationsMulti, currFract.rt.threshold*thresholdMulti),0,30)
+		love.graphics.print(love.filesystem.getSaveDirectory().."/"..currFract.path,0,45)
+	elseif love.keyboard.isDown('pageup') or love.keyboard.isDown('pagedown') then
+		love.graphics.setPixelEffect()
+		love.graphics.setColor(0,255,0)
+		love.graphics.print(("speed : %04f"):format(direction.speed),0,0)
 	end
 end
 
