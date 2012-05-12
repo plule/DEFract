@@ -4,17 +4,21 @@ render = {
 	rt = { dim = {love.graphics.getWidth(), love.graphics.getHeight()}},
 	hq = { dim = {love.graphics.getWidth(), love.graphics.getHeight()},
 		threshold=0.02,maxIterations=100},
-	hd = { dim = {1280,1024},
+	hd = { dim = {1024,1024},
 		threshold=0.02,maxIterations=100},
 	codeHeader = [[
 extern vec3 position; // Position of the Eye
 extern vec3 origin; // origin of the projection plane
 extern vec3 planex;  // definition of the projection plane
 extern vec3 planey;
+extern float time;
+
 float w = %f;     // Size of the window
 float h = %f;
 extern float maxIterations; // Max number of rendering step
 extern float threshold;// Limit to estimate that we touch the object
+
+float PI = 3.141592654;
 ]],
 	codeRenderer = [[
 vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
@@ -23,7 +27,7 @@ vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
 	pc.y = pc.y/h-0.5;
 	vec3 p = origin + planex*pc.x + planey*pc.y;
 	vec3 d = (p-position) / length(p-position);
-	//p=position;
+	p=position;
 	float distance = DE(p);
 	int i;
 	while((distance > threshold) && (i < maxIterations))
@@ -40,6 +44,7 @@ vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
 }
 
 function render.updateShader(fractal)
+	fractal.code = love.filesystem.load(fractal.path)().code
 	fractal.shaders = {}
 end
 
@@ -47,6 +52,7 @@ function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
 	fractal.shaders = fractal.shaders or {}
 	fractal.shaders[quality] = fractal.shaders[quality] or render.getPixelEffect(fractal.code, unpack(render[quality].dim))
 	local shader = fractal.shaders[quality]
+	
 	canvas:clear()
 	love.graphics.setCanvas(canvas)
 	if type(shader) == "string" then
@@ -77,6 +83,11 @@ function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
 		
 		local planex = vectorFromSpherical(width/1000,math.pi/2, direction.phi+math.pi/2)
 		shader:send("planex", {planex:unpack()})
+		if pcall(function() shader:send("time", currTime) end) then
+			animatedFractal = true
+		else
+			animatedFractal = false
+		end
 		love.graphics.setColor(0,0,0,255)
 		love.graphics.rectangle("fill",0,0,width,height)
 		love.graphics.setColor(255,255,255,255)

@@ -12,17 +12,25 @@ function love.load()
 	love.mouse.setVisible(false)
 	fractals = {}
 	love.filesystem.mkdir("fractals")
-	for _,file in ipairs(love.filesystem.enumerate("examples")) do
+	examples = love.filesystem.enumerate("examples")
+	for _,file in ipairs(love.filesystem.enumerate("fractals")) do
+		for i,example in ipairs(examples) do
+			if file == example then examples[i] = nil end
+		end
 		if file:sub(-4) == ".lua" then
-			if not love.filesystem.exists("fractals/"..file) then
+			table.insert(fractals, parseFile("fractals/"..file))
+		end
+	end
+	for _,file in ipairs(examples) do
+		if file:sub(-4) == ".lua" then
+	--		if not love.filesystem.exists("fractals/"..file) then
 				src = love.filesystem.newFile("examples/"..file)
 				src:open('r')
 				dest = love.filesystem.newFile("fractals/"..file)
 				dest:open('w')
 				dest:write(src:read())
-			end
-			local fractal = love.filesystem.load("fractals/"..file)() -- TODO check errors
-			fractal.path = "fractals/"..file
+	--		end
+			local fractal = parseFile("fractals/"..file)
 			table.insert(fractals,fractal)
 		end
 	end
@@ -40,8 +48,19 @@ function love.load()
 	lastModif = 0
 	maxIterations = 50
 	threshold = 0.01
-	
+	animatedFractal = false
+	currTime = 0
 	loadParameters(currFract)
+end
+
+function parseFile(file, outputfract)
+	outputfract = outputfract or {}
+	local newFractal = love.filesystem.load(file)() -- TODO check errors
+	for k,v in pairs(newFractal) do
+		outputfract[k] = v
+	end
+	outputfract.path = file
+	return outputfract
 end
 
 function loadParameters(fract)
@@ -54,6 +73,7 @@ function loadParameters(fract)
 	end
 	if(fract.rt.threshold) then threshold = fract.rt.threshold end
 	if(fract.rt.maxIterations) then maxIterations = fract.rt.maxIterations end
+	love.graphics.setCaption("DEFract : "..fract.path)
 	mustRedraw = true
 end
 
@@ -70,7 +90,7 @@ function nextView()
 end
 
 function love.draw()
-	if mustRedraw then
+	if mustRedraw or animatedFractal then
 		render.renderTo(currFract, rtcanvas, "rt", maxIterations, threshold)
 		mustRedraw = false
 		mustRedrawHQ = true
@@ -90,11 +110,13 @@ function love.draw()
 end
 
 function love.update(dt)
+	currTime = currTime+dt
 	timeCheck = timeCheck+dt
 	if(timeCheck >= 0.5) then
 		timeCheck = 0
 		if lastModif ~= love.filesystem.getLastModified(currFract.path) then
 			lastModif = love.filesystem.getLastModified(currFract.path)
+			parseFile(currFract.path, currFract)
 			render.updateShader(currFract)
 			mustRedraw = true
 		end
