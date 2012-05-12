@@ -1,6 +1,6 @@
 return {
 	name="Spheres",
-	description="Taken from http://blog.hvidtfeldts.net/index.php/2011/08/distance-estimated-3d-fractals-iii-folding-space/",
+	description="Inspired by http://blog.hvidtfeldts.net/index.php/2011/08/distance-estimated-3d-fractals-iii-folding-space/",
 	views = {
 		{position=vector(-8.2438372072926,31.797857134219,10.148725520207), direction = {speed=2.000000, phi=29.673599, theta=2.111593}},
 	},
