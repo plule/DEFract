@@ -2,6 +2,7 @@ vector = require("vector3d")
 require("render")
 
 function love.load()
+	love.filesystem.setIdentity("DEFract")
 	position = vector(-15, -15, 5)
 	direction = {speed=2, phi=math.pi/6, theta=math.pi/2}
 	mouse = {x=love.mouse.getX(), y=love.mouse.getY()}
