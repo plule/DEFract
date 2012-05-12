@@ -13,17 +13,15 @@ float Scale = 2.;
 float Offset = 10.;
 float DE(vec3 z)
 {
-    float r;
-    int n = 0;
-    while (n < Iterations) {
-       if(z.x+z.y<0) z.xy = -z.yx; // fold 1
-       if(z.x+z.z<0) z.xz = -z.zx; // fold 2
-       if(z.y+z.z<0) z.zy = -z.yz; // fold 3
-       z = z*Scale - Offset*(Scale-1.0);
-       r = dot(z, z);
-       n++;
-    }
-    return (length(z) ) * pow(Scale, -float(n));
+	int n = 0;
+	while (n < Iterations) {
+		if(z.x+z.y<0) z.xy = -z.yx; // fold 1
+		if(z.x+z.z<0) z.xz = -z.zx; // fold 2
+		if(z.y+z.z<0) z.zy = -z.yz; // fold 3
+		z = z*Scale - Offset*(Scale-1.0);
+		n++;
+	}
+	return (length(z) ) * pow(Scale, -float(n));
 }
 ]]
 }

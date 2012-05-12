@@ -2,11 +2,12 @@ return {
 	name="Kaleidoscopic IFS",
 	description="Taken from http://www.fractalforums.com/3d-fractal-generation/kaleidoscopic-%28escape-time-ifs%29/",
 	views = {
-		{position=vector(1.64, 0.8, -0.3), direction = {speed=0.5, phi=-2.65, theta=1.3815}},
+		{position=vector(6.1812847226932,4.8685069372872,7.2079703755023), direction = {speed=2.000000, phi=-2.360000, theta=2.301500}},
+		{position=vector(3.2972297054397,-0.012429725521014,5.3079703755023), direction = {speed=2.000000, phi=-3.150000, theta=2.211593}},
 	},
-	rt = {threshold = 0.001, maxIterations = 50},
-	hd = {threshold = 0.001, maxIterations = 70},
-	hq = {threshold = 0.001, maxIterations = 70},
+	rt = {threshold = 0.005, maxIterations = 100},
+	hd = {threshold = 0.001, maxIterations = 300},
+	hq = {threshold = 0.001, maxIterations = 300},
 	code=[[
 int Iterations = 10;
 
@@ -15,7 +16,7 @@ float scale = 2.;
 vec3 offset = normalize(vec3(1.1,phi-1.0,0.0));
 vec3 n1 = normalize(vec3(-phi,phi-1.0,1.0));
 vec3 n2 = normalize(vec3(1.0,-phi,phi+1.0));
-float bailoutSquared = 1000000.;
+float bailoutSquared = 1000000000;
       
 // Return reflection matrix for plane with normal 'n'
 mat3 reflectionMatrix(vec3 n)
@@ -29,6 +30,7 @@ float DE(vec3 p)
 {
 	mat3 n1Mat = reflectionMatrix(n1);
 	mat3 n2Mat = reflectionMatrix(n2);
+	p = p/5;
 	float n;
 	for(n=0; n<Iterations; n++) {
 		p.y = abs(p.y); 

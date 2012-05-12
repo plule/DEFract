@@ -7,8 +7,8 @@ return {
 		{position=vector(0.0031743541978261,-9.4093969864814,0.013476554949394), direction = {speed=2.000000, phi=1.520000, theta=1.640000}},
 	},
 	rt = {threshold=0.01,maxIterations=58},
-	hd = {threshold=0.002,maxIterations=70},
-	hq = {threshold=0.002,maxIterations=70},
+	hd = {threshold=0.005,maxIterations=70},
+	hq = {threshold=0.005,maxIterations=70},
 	code = [[
 float Scale=2;
 int Iterations = 10;    // Max iteration of the fractal generation

@@ -1,58 +1,34 @@
 return {
 	name="Menger Sponge",
-	description="Taken from http://snipplr.com/view/33781/",
+	description="Totally copied from fragmentarium code.",
 	views = {
-		{position=vector(3, -2.5, 2.2), direction = {speed=2, phi=-3.94, theta=2.28}},
+		{position=vector(-1.5371718654061,2.1532370586601,1.1774294611279), direction = {speed=30, phi=-7.230000, theta=2.040000}},
+		{position=vector(-788.83254935972,-1.741453859346,-548.80977315143), direction = {speed=1.385461, phi=-13.400000, theta=1.220000}},
 	},
-	rt = {maxIterations = 200, threshold = 0.001},
-	hd = {maxIterations = 600, threshold = 0.00001},
-	hq = {maxIterations = 600, threshold = 0.00001},
+	rt = {maxIterations = 50, threshold = 0.1},
+	hd = {maxIterations = 50, threshold = 0.1},
+	hq = {maxIterations = 50, threshold = 0.1},
 	code=[[
-float DE(vec3 z0)
+float Scale = 3;
+vec3 Offset = vec3(1,1,1)*1000;
+int Iterations = 20;
+
+float DE(vec3 z)
 {
-	float r = length(z0);
-	float scale = 3.1;
-	float CX = 2.0;
-	float CY = 1.0;
-	float CZ = 1.0;
-	float t = 0.0;
-	int i = 0;
-	int Iterations = 5;
-	for (i=0;i<Iterations && r<60.0;i++){
- 
-		// Rotation around z-axis
-		float angle = -0.08;
-		float x2 = cos(angle)*z0.x + sin(angle)*z0.y;
-		float y2 = -sin(angle)*z0.x + cos(angle)*z0.y;
-		z0.x = x2; z0.y = y2;
+	int n = 0;
+	while (n < Iterations) {   
+		z = abs(z);
+		if (z.x<z.y){ z.xy = z.yx;} 
+		if (z.x< z.z){ z.xz = z.zx;}
+		if (z.y<z.z){ z.yz = z.zy;}
 		
-		
-		z0.x=abs( z0.x); z0.y=abs( z0.y); z0.z=abs( z0.z);
-		if( z0.x- z0.y<0.0){t= z0.y; z0.y= z0.x; z0.x=t;}
-		if( z0.x- z0.z<0.0){t= z0.z; z0.z= z0.x; z0.x=t;}
-		if( z0.y- z0.z<0.0){t= z0.z; z0.z= z0.y; z0.y=t;}
-		
-		// Reverse rotation around z-axis
-		angle = -angle*5;
-		x2 = cos(angle)*z0.x + sin(angle)*z0.y;
-		y2 = -sin(angle)*z0.x + cos(angle)*z0.y;
-		z0.x = x2; z0.y = y2;
-		
-		z0.x=scale* z0.x-CX*(scale-1.0);
-		z0.y=scale* z0.y-CY*(scale-1.0);
-		z0.z=scale* z0.z;
-		if( z0.z>0.5*CZ*(scale-1.0)) z0.z-=CZ*(scale-1.0);
-		
-		
-		// Extra folding step
-		if(z0.x+z0.y<1.0){t=-z0.y;z0.y=-z0.x;z0.x=t;}
-		if(z0.x+z0.z<0.0){t=-z0.z;z0.z=-z0.x;z0.x=t;}
-		if(z0.y+z0.z<0.0){t=-z0.z;z0.z=-z0.y;z0.y=t;}
-		
-		
-		r=length(z0);
+		z = Scale*z-Offset*(Scale-1.0);
+		if( z.z<-0.5*Offset.z*(Scale-1.0)) z.z+=Offset.z*(Scale-1.0);
+
+		n++;
 	}
-	return (sqrt(r)-2.0)*pow(scale,float(-i));//the estimated distance
+
+	return abs(length(z)) * pow(Scale, float(-n));
 }
 ]]
 }
