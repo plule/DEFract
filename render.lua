@@ -11,7 +11,6 @@ extern vec3 position; // Position of the Eye
 extern vec3 origin; // origin of the projection plane
 extern vec3 planex;  // definition of the projection plane
 extern vec3 planey;
-extern float time;
 
 float w = %f;     // Size of the window
 float h = %f;
@@ -29,30 +28,38 @@ vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
 	vec3 d = (p-position) / length(p-position);
 	p=position;
 	float distance = DE(p);
-	int i;
+	int i=0;
 	while((distance > threshold) && (i < maxIterations))
 	{
 		p = p+distance*d;
 		distance = DE(p);
 		i++;
 	}
-	float j = i;
-	float co = 1-j/maxIterations;
+	float co = 1-float(i)/maxIterations;
 	return vec4(co);
 }
-]]
+]],
+	codeAnimation = [[
+extern float time;
+]],
+	shaders = {}
 }
 
 function render.updateShader(fractal)
 	fractal.code = love.filesystem.load(fractal.path)().code
-	fractal.shaders = {}
+	render.lastFractal = nil
+	render.shaders = {}
 end
 
 function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
-	fractal.shaders = fractal.shaders or {}
-	fractal.shaders[quality] = fractal.shaders[quality] or render.getPixelEffect(fractal.code, unpack(render[quality].dim))
-	local shader = fractal.shaders[quality]
-	
+	if render.lastFractal ~= fractal then
+		render.lastFractal = fractal
+		render.shaders = {}
+	end
+	if not render.shaders[quality] then
+		render.shaders[quality] = render.getPixelEffect(fractal.code, unpack(render[quality].dim))
+	end
+	local shader = render.shaders[quality]
 	canvas:clear()
 	love.graphics.setCanvas(canvas)
 	if type(shader) == "string" then
@@ -84,11 +91,7 @@ function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
 		
 		local planex = vectorFromSpherical(width/1000,math.pi/2, direction.phi+math.pi/2)
 		shader:send("planex", {planex:unpack()})
-		if pcall(function() shader:send("time", currTime) end) then
-			animatedFractal = true
-		else
-			animatedFractal = false
-		end
+		if animatedFractal then shader:send("time", currTime) end
 		love.graphics.setColor(0,0,0,255)
 		love.graphics.rectangle("fill",0,0,width,height)
 		love.graphics.setColor(255,255,255,255)
@@ -98,9 +101,30 @@ function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
 end
 
 function render.getPixelEffect(code, width, height)
+	-- Try to build animated code
 	state, ret = pcall(function()
-		return love.graphics.newPixelEffect((render.codeHeader):format(width,height)..code..render.codeRenderer)
+		return love.graphics.newPixelEffect(
+			(render.codeHeader):format(width,height)..render.codeAnimation..code..render.codeRenderer)
 		end
 	)
+	-- Failed to build
+	if not state then
+		print("Failed to build")
+		return ret
+	end
+	
+	-- Try to send time
+	if pcall(function() ret:send("time", currTime) end) then
+		animatedFractal = true
+		return ret
+	else
+		-- Time sending failed, generate a still fractal
+		animatedFractal = false
+		state,ret = pcall(function()
+			return love.graphics.newPixelEffect(
+				(render.codeHeader):format(width,height)..code..render.codeRenderer)
+			end
+		)
+	end
 	return ret
 end
