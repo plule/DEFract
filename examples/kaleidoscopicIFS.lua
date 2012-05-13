@@ -16,8 +16,8 @@ float scale = 2.;
 vec3 offset = normalize(vec3(1.1,phi-1.0,0.0));
 vec3 n1 = normalize(vec3(-phi,phi-1.0,1.0));
 vec3 n2 = normalize(vec3(1.0,-phi,phi+1.0));
-float bailoutSquared = 1000000000;
-      
+float bailoutSquared = 1000000000.0;
+
 // Return reflection matrix for plane with normal 'n'
 mat3 reflectionMatrix(vec3 n)
 {
