@@ -9,8 +9,8 @@ return {
 	hd = {maxIterations = 50, threshold = 0.1},
 	hq = {maxIterations = 50, threshold = 0.1},
 	code=[[
-float Scale = 3;
-vec3 Offset = vec3(1,1,1)*1000;
+float Scale = 3.;
+vec3 Offset = vec3(1.,1.,1.)*1000.;
 int Iterations = 20;
 
 float DE(vec3 z)

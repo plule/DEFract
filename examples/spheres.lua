@@ -11,10 +11,10 @@ return {
 float DE(vec3 z)
 {
 	float radius = 0.5;
-	float spacing = 2.5+sin(time/3);
-	z.z = z.z-sin(length(z)-time)/4;
-	z.z = z.z-sin(length(z+vec3(20,0,0))-time)/4;
-	z.xy = mod((z.xy), spacing) - vec2(spacing/2);
+	float spacing = 2.5+sin(time/3.);
+	z.z = z.z-sin(length(z)-time)/4.;
+	z.z = z.z-sin(length(z+vec3(20.,0.,0.))-time)/4.;
+	z.xy = mod((z.xy), spacing) - vec2(spacing/2.);
 	return min(length(z)-radius, z.z+0.3);
 }
 ]]

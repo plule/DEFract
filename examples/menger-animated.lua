@@ -10,10 +10,10 @@ return {
 	hq = {maxIterations = 200, threshold = 0.001},
 	code=[[
 mat3 rot;
-float Scale = 3;
-vec3 Offset = vec3(1,1,1)*5;
-vec3 RotVector = vec3(1,1,1);
-float RotAngle = mod(time*10,360.0);
+float Scale = 3.;
+vec3 Offset = vec3(1.,1.,1.)*5.;
+vec3 RotVector = vec3(1.,1.,1.);
+float RotAngle = mod(time*10.,360.0);
 int Iterations = 10;
 mat3 rotationMatrix3(vec3 v, float angle)
 {

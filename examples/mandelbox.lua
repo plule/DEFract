@@ -10,10 +10,8 @@ return {
 	hd = {threshold=0.005,maxIterations=70},
 	hq = {threshold=0.005,maxIterations=70},
 	code = [[
-float Scale=2;
+float Scale=2.;
 int Iterations = 10;    // Max iteration of the fractal generation
-int Power=8;
-float Bailout=5;
 float minRadius2 = 0.9;
 float fixedRadius2 = 5.;
 float fixedRadius = 1.;

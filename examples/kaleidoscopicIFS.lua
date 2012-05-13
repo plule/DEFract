@@ -30,8 +30,8 @@ float DE(vec3 p)
 {
 	mat3 n1Mat = reflectionMatrix(n1);
 	mat3 n2Mat = reflectionMatrix(n2);
-	p = p/5;
-	float n;
+	p = p/5.0;
+	int n;
 	for(n=0; n<Iterations; n++) {
 		p.y = abs(p.y); 
 		p.z = abs(p.z);
