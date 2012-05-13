@@ -16,7 +16,7 @@ float w = %f;     // Size of the window
 float h = %f;
 extern float maxIterations; // Max number of rendering step
 extern float threshold;// Limit to estimate that we touch the object
-
+int maxIt; // maxIterations converted to int
 float PI = 3.141592654;
 ]],
 	codeRenderer = [[
@@ -26,16 +26,17 @@ vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
 	pc.y = pc.y/h-0.5;
 	vec3 p = origin + planex*pc.x + planey*pc.y;
 	vec3 d = (p-position) / length(p-position);
+	maxIt = int(maxIterations);
 	p=position;
 	float distance = DE(p);
 	int i=0;
-	while((distance > threshold) && (i < maxIterations))
+	while((distance > threshold) && (i < maxIt))
 	{
 		p = p+distance*d;
 		distance = DE(p);
 		i++;
 	}
-	float co = 1-float(i)/maxIterations;
+	float co = 1.0-(float(i)+distance/threshold)/maxIterations;
 	return vec4(co);
 }
 ]],
