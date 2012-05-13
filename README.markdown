@@ -1,4 +1,4 @@
-DEFract - A 3D fractal visualisator - v0.3
+DEFract - A 3D fractal visualisator - v0.4
 ==========================================
 
 The goal of this soft is to generate real-time 3D pics from distance estimator functions.
