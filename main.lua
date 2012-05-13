@@ -2,7 +2,7 @@ vector = require("vector3d")
 require("render")
 
 function love.load()
-	version = 0.3
+	version = "0.4"
 	
 	love.filesystem.setIdentity("DEFract_"..version)
 	position = vector(-15, -15, 5)
@@ -116,10 +116,12 @@ function love.draw()
 	end
 	if love.keyboard.isDown(' ') then
 		love.graphics.setColor(0,255,0)
-		love.graphics.print("position "..tostring(position),0,0)
-		love.graphics.print(("direction : speed %04f phi %04f theta %04f"):format(direction.speed,direction.phi,direction.theta),0,15)
-		love.graphics.print(("maxIterations : %d threshold : %04f"):format(currFract.rt.maxIterations*maxIterationsMulti, currFract.rt.threshold*thresholdMulti),0,30)
-		love.graphics.print(love.filesystem.getSaveDirectory().."/"..currFract.path,0,45)
+		love.graphics.print(love.filesystem.getSaveDirectory().."/"..currFract.path,0,0)
+		love.graphics.print(love.timer.getFPS().." FPS",0,15)
+		love.graphics.print("position "..tostring(position),0,30)
+		love.graphics.print(("direction : speed %04f phi %04f theta %04f"):format(direction.speed,direction.phi,direction.theta),0,45)
+		love.graphics.print(("maxIterations : %d threshold : %04f"):format(currFract.rt.maxIterations*maxIterationsMulti, currFract.rt.threshold*thresholdMulti),0,60)
+		
 	elseif love.keyboard.isDown('pageup') or love.keyboard.isDown('pagedown') then
 		love.graphics.setColor(0,255,0)
 		love.graphics.print(("speed : %04f"):format(direction.speed),0,0)
