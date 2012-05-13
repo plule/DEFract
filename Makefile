@@ -14,7 +14,7 @@ game=defract
 sources=*.lua */*.lua
 res=
 readme=README.markdown
-version=0.2
+version=0.3
 
 distname = $(game)-$(version)
 

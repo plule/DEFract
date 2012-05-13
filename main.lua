@@ -2,7 +2,9 @@ vector = require("vector3d")
 require("render")
 
 function love.load()
-	love.filesystem.setIdentity("DEFract")
+	version = 0.3
+	
+	love.filesystem.setIdentity("DEFract_"..version)
 	position = vector(-15, -15, 5)
 	direction = {speed=2, phi=math.pi/6, theta=math.pi/2}
 	mouse = {x=love.mouse.getX(), y=love.mouse.getY()}
@@ -76,7 +78,7 @@ function loadParameters(fract)
 		direction.phi = fract.views[1].direction.phi
 		direction.theta = fract.views[1].direction.theta
 	end
-	love.graphics.setCaption("DEFract 0.2 : "..fract.path)
+	love.graphics.setCaption("DEFract "..version.." : "..fract.path)
 	mustRedraw = true
 end
 
