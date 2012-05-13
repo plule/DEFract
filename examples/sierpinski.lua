@@ -4,9 +4,8 @@ return {
 	views = {
 		{position=vector(-20, 13, -1.4),direction = {speed=2, phi=-0.62, theta=math.pi/2}},
 	},
-	rt = {maxIterations = 30, threshold = 0.02},
-	hq = {maxIterations = 30, threshold = 0.02},
-	hd = {maxIterations = 30, threshold = 0.02},
+	maxIterations = 30,
+	threshold = 0.02,
 	code=[[
 int Iterations = 10;
 float Scale = 2.;

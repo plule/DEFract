@@ -17,7 +17,8 @@ function love.load()
 	love.filesystem.mkdir("fractals")
 	love.filesystem.mkdir("records")
 	examples = love.filesystem.enumerate("examples")
-	for _,file in ipairs(love.filesystem.enumerate("fractals")) do
+	userFractals = love.filesystem.enumerate("fractals")
+	for _,file in ipairs(userFractals) do
 		for i,example in ipairs(examples) do
 			if file == example then examples[i] = nil end
 		end
@@ -39,9 +40,8 @@ function love.load()
 		end
 	end
 	rtcanvas = love.graphics.newCanvas()
-	screenshotcanvas = love.graphics.newCanvas(unpack(render.hd.dim))
+	screenshotcanvas = love.graphics.newCanvas(unpack(render.hd))
 	mustRedraw = true
-	mustRedrawHQ = true
 	recording = false
 	slowTime = false
 	recordFolder = ""
@@ -54,9 +54,9 @@ function love.load()
 	lastModif = 0
 	animatedFractal = false
 	currTime = 0
-	thresholdMulti = 1
-	maxIterationsMulti = 1
 	zoom = 1
+	threshold = 0.5
+	maxIterations = 40
 	loadParameters(currFract)
 end
 
@@ -78,6 +78,8 @@ function loadParameters(fract)
 		direction.phi = fract.views[1].direction.phi
 		direction.theta = fract.views[1].direction.theta
 	end
+	threshold = fract.threshold
+	maxIterations = fract.maxIterations
 	love.graphics.setCaption("DEFract "..version.." : "..fract.path)
 	mustRedraw = true
 end
@@ -98,10 +100,6 @@ function love.draw()
 	if mustRedraw or animatedFractal then
 		render.renderTo(currFract, rtcanvas, "rt")
 		mustRedraw = false
-		mustRedrawHQ = true
-	elseif mustRedrawHQ then
-		render.renderTo(currFract, rtcanvas, "hq")
-		mustRedrawHQ = false
 	end
 	if recording then
 		rtcanvas:getImageData():encode(recordFolder..("/%04d.jpg"):format(lastFrameNb))
@@ -120,7 +118,7 @@ function love.draw()
 		love.graphics.print(love.timer.getFPS().." FPS",0,15)
 		love.graphics.print("position "..tostring(position),0,30)
 		love.graphics.print(("direction : speed %04f phi %04f theta %04f"):format(direction.speed,direction.phi,direction.theta),0,45)
-		love.graphics.print(("maxIterations : %d threshold : %04f"):format(currFract.rt.maxIterations*maxIterationsMulti, currFract.rt.threshold*thresholdMulti),0,60)
+		love.graphics.print(("maxIterations : %d threshold : %04f"):format(maxIterations, threshold),0,60)
 		
 	elseif love.keyboard.isDown('pageup') or love.keyboard.isDown('pagedown') then
 		love.graphics.setColor(0,255,0)
@@ -200,8 +198,8 @@ code :
 	]]
 	content = content:format(tostring(position), direction.speed,
 			direction.phi, direction.theta, currFract.path,
-			currFract.hd.threshold*thresholdMulti,
-			currFract.hd.maxIterations*maxIterationsMulti,
+			threshold,
+			maxIterations,
 			currFract.code)
 	description:write(content)
 	description:close()
@@ -250,8 +248,6 @@ function love.keypressed(k,u)
 	if k == 'tab' then
 		currFractNb = ((currFractNb)%(#fractals))+1
 		currFract = fractals[currFractNb]
-		maxIterationsMulti = 1
-		thresholdMulti = 1
 		loadParameters(currFract)
 	end
 	if k == 'f2' then
@@ -283,12 +279,12 @@ end
 
 function love.mousepressed(x,y,button)
 	if button == "wu" then
-		maxIterationsMulti = maxIterationsMulti*1.2
-		thresholdMulti = thresholdMulti/2
+		maxIterations = maxIterations + 5
+		threshold = threshold/1.5
 		mustRedraw = true
 	elseif button == "wd" then
-		maxIterationsMulti = maxIterationsMulti/1.2
-		thresholdMulti = thresholdMulti*2
+		maxIterations = maxIterations - 5
+		threshold = threshold*1.5
 		mustRedraw = true
 	else
 		focus = not focus

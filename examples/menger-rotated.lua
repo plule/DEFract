@@ -5,9 +5,8 @@ return {
 		{position=vector(-1.5371718654061,2.1532370586601,1.1774294611279), direction = {speed=70, phi=-7.230000, theta=2.040000}},
 		{position=vector(-341.00724398697,273.39373038008,465.15740521731), direction = {speed=69.499161, phi=-6.970000, theta=2.350000}},
 	},
-	rt = {maxIterations = 40, threshold = 0.5},
-	hd = {maxIterations = 40, threshold = 0.5},
-	hq = {maxIterations = 40, threshold = 0.5},
+	maxIterations = 40,
+	threshold = 0.5,
 	code=[[
 mat3 rot;
 float Scale = 3.;

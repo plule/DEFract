@@ -1,11 +1,8 @@
 vector = require("vector3d")
 
 render = {
-	rt = { dim = {love.graphics.getWidth(), love.graphics.getHeight()}},
-	hq = { dim = {love.graphics.getWidth(), love.graphics.getHeight()},
-		threshold=0.02,maxIterations=100},
-	hd = { dim = {1024,1024},
-		threshold=0.02,maxIterations=100},
+	rt = {love.graphics.getWidth(), love.graphics.getHeight()},
+	hd = {1024,1024},
 	codeHeader = [[
 extern vec3 position; // Position of the Eye
 extern vec3 origin; // origin of the projection plane
@@ -52,13 +49,13 @@ function render.updateShader(fractal)
 	render.shaders = {}
 end
 
-function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
+function render.renderTo(fractal, canvas, quality)
 	if render.lastFractal ~= fractal then
 		render.lastFractal = fractal
 		render.shaders = {}
 	end
 	if not render.shaders[quality] then
-		render.shaders[quality] = render.getPixelEffect(fractal.code, unpack(render[quality].dim))
+		render.shaders[quality] = render.getPixelEffect(fractal.code, unpack(render[quality]))
 	end
 	local shader = render.shaders[quality]
 	canvas:clear()
@@ -70,18 +67,16 @@ function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
 		love.graphics.print(shader,0,15)
 		focus = false
 	else
-		local width,height = unpack(render[quality].dim)
+		local width,height = unpack(render[quality])
 		local preset = fractal[quality] or {}
 		love.graphics.setPixelEffect(shader)
 		
-		local maxIterations = maxIterations or preset.maxIterations or render[quality].maxIterations
-		local threshold = threshold or preset.threshold or render[quality].threshold
-		shader:send("maxIterations", maxIterations*maxIterationsMulti)
-		shader:send("threshold",threshold*thresholdMulti)
+		shader:send("maxIterations", maxIterations)
+		shader:send("threshold",threshold)
 		
 		love.graphics.setPixelEffect(shader)
 		local normalizedDir = vectorFromSpherical(1,direction.theta,direction.phi)
-		ratio = height/render.rt.dim[2]
+		ratio = height/render.rt[2]
 		
 		local origin = position+normalizedDir*projDist*ratio*zoom
 		shader:send("position", {position:unpack()})
