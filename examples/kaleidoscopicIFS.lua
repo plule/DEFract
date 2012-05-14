@@ -5,8 +5,9 @@ return {
 		{position=vector(6.1812847226932,4.8685069372872,7.2079703755023), direction = {speed=2.000000, phi=-2.360000, theta=2.301500}},
 		{position=vector(3.2972297054397,-0.012429725521014,5.3079703755023), direction = {speed=2.000000, phi=-3.150000, theta=2.211593}},
 	},
-	threshold = 0.005,
-	maxIterations = 100,
+	rt = {threshold = 0.005, maxIterations = 100},
+	hd = {threshold = 0.001, maxIterations = 300},
+	hq = {threshold = 0.001, maxIterations = 300},
 	code=[[
 int Iterations = 10;
 
