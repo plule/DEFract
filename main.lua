@@ -52,7 +52,8 @@ function love.load()
 	focus = true
 	timeCheck = 0
 	lastModif = 0
-	animatedFractal = false
+	animatedFractal = false -- The current fractal support animation
+	animate = true -- The user wants animation
 	currTime = 0
 	thresholdMulti = 1
 	maxIterationsMulti = 1
@@ -95,7 +96,7 @@ function nextView()
 end
 
 function love.draw()
-	if mustRedraw or animatedFractal then
+	if mustRedraw or (animatedFractal and animate) then
 		render.renderTo(currFract, rtcanvas, "rt")
 		mustRedraw = false
 		mustRedrawHQ = true
@@ -129,10 +130,12 @@ function love.draw()
 end
 
 function love.update(dt)
-	if slowTime then
-		currTime = currTime+dt/2
-	else
-		currTime = currTime+dt
+	if animate then --Don't make the animation progress if nobody's watching
+		if slowTime then
+			currTime = currTime+dt/2
+		else
+			currTime = currTime+dt
+		end
 	end
 	timeCheck = timeCheck+dt
 	if(timeCheck >= 0.5) then
@@ -169,7 +172,6 @@ function love.update(dt)
 		position = position + vectorFromSpherical(direction.speed, math.pi/2, direction.phi+math.pi/2)*dt
 		mustRedraw = true
 	end
-	
 	if focus and (mouse.x ~= love.mouse.getX() or mouse.y ~= love.mouse.getY()) then
 		mustRedraw = true
 		direction.phi = direction.phi+(love.mouse.getX()-mouse.x)/100
@@ -272,6 +274,9 @@ function love.keypressed(k,u)
 	end
 	if k == 'return' then
 		nextView()
+	end
+	if k == 'a' then
+		animate = not animate
 	end
 end
 
