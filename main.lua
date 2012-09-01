@@ -2,6 +2,7 @@ vector = require("vector3d")
 require("render")
 
 function love.load()
+	render.load()
 	version = "0.4"
 	
 	love.filesystem.setIdentity("DEFract_"..version)
