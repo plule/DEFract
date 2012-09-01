@@ -1,2 +1,6 @@
 *~
-
+build
+*.love
+dist/
+love-bin/
+*.gif
