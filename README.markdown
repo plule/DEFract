@@ -12,8 +12,7 @@ Get latest update on [github](https://github.com/PierreLu/DEFract).
 What can DEFract do?
 --------------------
 
-THIS :
-
+DEFract produces explorable fractals like this :
 ![Mechanical madness](https://github.com/PierreLu/DEFract/blob/master/renders/DEFract_12.jpg?raw=true)
 
 Currently you can :
@@ -70,8 +69,10 @@ What is missing?
  * Better control
  * Automatic save of the views in the file
  * Alot of bugs/crashes are still present
- * MOAR FRACTALS
+ * More fractals
  * 2D support (why not?)
 
-Hey. Last one :
+Some more pics :
 ![Mandelbox](https://github.com/PierreLu/DEFract/blob/master/renders/DEFract_3.jpg?raw=true)
+![Rotated Mandelbox](http://i.imgur.com/Vshm6.jpg)
+![Inside the rotated Mandelbox](http://i.imgur.com/Z3SxB.jpg)
