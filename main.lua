@@ -1,311 +1,63 @@
-vector = require("vector3d")
-require("render")
+require "fractal"
+require "render"
 
 function love.load()
+	Width = love.graphics.getWidth()
+	Height = love.graphics.getHeight()
 	render.load()
-	version = "0.4"
-	
-	love.filesystem.setIdentity("DEFract_"..version)
-	position = vector(-15, -15, 5)
-	direction = {speed=2, phi=math.pi/6, theta=math.pi/2}
-	mouse = {x=love.mouse.getX(), y=love.mouse.getY()}
-	projDist=0.4
-	height = love.graphics.getHeight()
-	width = love.graphics.getWidth()
+	fractal = Fractal("mandelbox.frag")
+
+	mouse = {}
+	mouse.x,mouse.y = love.mouse.getPosition()
 	love.mouse.setGrab(true)
 	love.mouse.setVisible(false)
-	fractals = {}
-	love.filesystem.mkdir("fractals")
-	love.filesystem.mkdir("records")
-	examples = love.filesystem.enumerate("examples")
-	for _,file in ipairs(love.filesystem.enumerate("fractals")) do
-		for i,example in ipairs(examples) do
-			if file == example then examples[i] = nil end
-		end
-		if file:sub(-4) == ".lua" then
-			table.insert(fractals, parseFile("fractals/"..file))
-		end
-	end
-	for _,file in ipairs(examples) do
-		if file:sub(-4) == ".lua" then
-	--		if not love.filesystem.exists("fractals/"..file) then
-				src = love.filesystem.newFile("examples/"..file)
-				src:open('r')
-				dest = love.filesystem.newFile("fractals/"..file)
-				dest:open('w')
-				dest:write(src:read())
-	--		end
-			local fractal = parseFile("fractals/"..file)
-			table.insert(fractals,fractal)
-		end
-	end
-	rtcanvas = love.graphics.newCanvas()
-	screenshotcanvas = love.graphics.newCanvas(unpack(render.hd.dim))
-	mustRedraw = true
-	mustRedrawHQ = true
-	recording = false
-	slowTime = false
-	recordFolder = ""
-	love.graphics.setBackgroundColor(0,0,0)
-	currFractNb = 1
-	currView = 1
-	currFract = fractals[currFractNb]
-	focus = true
-	timeCheck = 0
-	lastModif = 0
-	animatedFractal = false -- The current fractal support animation
-	animate = true -- The user wants animation
-	currTime = 0
-	thresholdMulti = 1
-	maxIterationsMulti = 1
-	zoom = 1
-	loadParameters(currFract)
-end
-
-function parseFile(file, outputfract)
-	outputfract = outputfract or {}
-	local newFractal = love.filesystem.load(file)() -- TODO check errors
-	for k,v in pairs(newFractal) do
-		outputfract[k] = v
-	end
-	outputfract.path = file
-	return outputfract
-end
-
-function loadParameters(fract)
-	currView = 1
-	if(fract.views[1].position) then position = fract.views[1].position:clone() end
-	if(fract.views[1].direction) then
-		direction.speed = fract.views[1].direction.speed
-		direction.phi = fract.views[1].direction.phi
-		direction.theta = fract.views[1].direction.theta
-	end
-	love.graphics.setCaption("DEFract "..version.." : "..fract.path)
-	mustRedraw = true
-end
-
-function nextView()
-	currView = ((currView)%(#(currFract.views)))+1
-	local view = currFract.views[currView]
-	if(view.position) then position = view.position:clone() end
-	if(view.direction) then
-		direction.speed = view.direction.speed
-		direction.phi = view.direction.phi
-		direction.theta = view.direction.theta
-	end
-	mustRedraw = true
 end
 
 function love.draw()
-	if mustRedraw or (animatedFractal and animate) then
-		render.renderTo(currFract, rtcanvas, "rt")
-		mustRedraw = false
-		mustRedrawHQ = true
-	elseif mustRedrawHQ then
-		render.renderTo(currFract, rtcanvas, "hq")
-		mustRedrawHQ = false
-	end
-	if recording then
-		rtcanvas:getImageData():encode(recordFolder..("/%04d.jpg"):format(lastFrameNb))
-		lastFrameNb = lastFrameNb+1
-	end
-	love.graphics.setColor(255,255,255)
-	love.graphics.draw(rtcanvas,0,0)
-	love.graphics.setPixelEffect()
-	if recording then
-		love.graphics.setColor(255,0,0)
-		love.graphics.circle("fill", width-15, 15, 5)
-	end
-	if love.keyboard.isDown(' ') then
-		love.graphics.setColor(0,255,0)
-		love.graphics.print(love.filesystem.getSaveDirectory().."/"..currFract.path,0,0)
-		love.graphics.print(love.timer.getFPS().." FPS",0,15)
-		love.graphics.print("position "..tostring(position),0,30)
-		love.graphics.print(("direction : speed %04f phi %04f theta %04f"):format(direction.speed,direction.phi,direction.theta),0,45)
-		love.graphics.print(("maxIterations : %d threshold : %04f"):format(currFract.rt.maxIterations*maxIterationsMulti, currFract.rt.threshold*thresholdMulti),0,60)
-		
-	elseif love.keyboard.isDown('pageup') or love.keyboard.isDown('pagedown') then
-		love.graphics.setColor(0,255,0)
-		love.graphics.print(("speed : %04f"):format(direction.speed),0,0)
-	end
+	fractal:draw()
+end
+
+function vectorFromSpherical(r, theta, phi)
+	return vector(	r*math.cos(theta)*math.sin(phi),
+			r*math.sin(theta)*math.sin(phi),
+			r*math.cos(phi))
 end
 
 function love.update(dt)
-	if animate then --Don't make the animation progress if nobody's watching
-		if slowTime then
-			currTime = currTime+dt/2
-		else
-			currTime = currTime+dt
-		end
+	local camera = fractal.camera
+	if love.keyboard.isDown("up") then
+		camera:forward(dt)
 	end
-	timeCheck = timeCheck+dt
-	if(timeCheck >= 0.5) then
-		timeCheck = 0
-		if lastModif ~= love.filesystem.getLastModified(currFract.path) then
-			lastModif = love.filesystem.getLastModified(currFract.path)
-			parseFile(currFract.path, currFract)
-			render.updateShader(currFract)
-			mustRedraw = true
-		end
+	if love.keyboard.isDown("down") then
+		camera:forward(-dt)
+	end
+	if love.keyboard.isDown("pageup") then
+		camera.projDist = camera.projDist + dt
+	end
+	if love.keyboard.isDown("pagedown") then
+		camera.projDist = camera.projDist - dt
 	end
 
-	if(love.keyboard.isDown("up")) then
-		dir = vectorFromSpherical(direction.speed, direction.theta, direction.phi)
-		position = position + dir*dt
-		mustRedraw = true
-	end
-	if(love.keyboard.isDown("down")) then
-		dir = vectorFromSpherical(direction.speed, direction.theta, direction.phi)
-		position = position - dir*dt
-		mustRedraw = true
-	end
-	if(love.keyboard.isDown("pageup")) then
-		direction.speed = direction.speed+direction.speed*dt*3
-	end
-	if(love.keyboard.isDown("pagedown")) then
-		direction.speed = direction.speed-direction.speed*dt*3
-	end
-	if(love.keyboard.isDown("left")) then
-		position = position + vectorFromSpherical(direction.speed, math.pi/2, direction.phi-math.pi/2)*dt
-		mustRedraw = true
-	end
-	if(love.keyboard.isDown("right")) then
-		position = position + vectorFromSpherical(direction.speed, math.pi/2, direction.phi+math.pi/2)*dt
-		mustRedraw = true
-	end
-	if focus and (mouse.x ~= love.mouse.getX() or mouse.y ~= love.mouse.getY()) then
-		mustRedraw = true
-		direction.phi = direction.phi+(love.mouse.getX()-mouse.x)/100
-		direction.theta = direction.theta+(love.mouse.getY()-mouse.y)/100
-		if(direction.theta > math.pi) then direction.theta = math.pi end
-		if(direction.theta < 0) then direction.theta = 0 end
+	if (mouse.x ~= love.mouse.getX() or mouse.y ~= love.mouse.getY()) then
+		
+		camera.phi = camera.phi-(love.mouse.getY()-mouse.y)/100
+		camera.theta = camera.theta-(love.mouse.getX()-mouse.x)/100
+		if(camera.phi > math.pi) then camera.phi = math.pi end
+		if(camera.phi < 0) then camera.phi = 0 end
+		if(camera.theta < 0) then camera.theta = 2*math.pi end
+		if(camera.theta > 2*math.pi) then camera.theta = 0 end
 		mouse.x,mouse.y = love.mouse.getX(),love.mouse.getY()
-		if mouse.x == 0 then mouse.x = width-2 end
-		if mouse.x == width-1 then mouse.x = 1 end
-		if mouse.y == 0 then mouse.y = height-2 end
-		if mouse.y == height-1 then mouse.y = 1 end
+		if mouse.x == 0 then mouse.x = Width-2 end
+		if mouse.x == Width-1 then mouse.x = 1 end
+		if mouse.y == 0 then mouse.y = Height-2 end
+		if mouse.y == Height-1 then mouse.y = 1 end
 		love.mouse.setPosition(mouse.x, mouse.y)
 	end
 end
 
-function storeInfos(path)
-	local description = love.filesystem.newFile(path)
-	description:open('w')
-	content = [[
-{position=vector%s, direction = {speed=%f, phi=%f, theta=%f}},
--------------
-filename : %s
-threshold : %f
-maxIterations : %i
-
-code :
-%s
-	]]
-	content = content:format(tostring(position), direction.speed,
-			direction.phi, direction.theta, currFract.path,
-			currFract.hd.threshold*thresholdMulti,
-			currFract.hd.maxIterations*maxIterationsMulti,
-			currFract.code)
-	description:write(content)
-	description:close()
-end
-
-function storeScreenShot()
-	local i = 1
-	while love.filesystem.exists("DEFract_"..i..".jpg") do
-		i = i+1
-	end
-	local name = "DEFract_"..i
-	render.renderTo(currFract, screenshotcanvas, "hd")
-	screenshotcanvas:getImageData():encode(name..".jpg")
-	storeInfos(name..".txt")
-end
-
-function startRecording()
-	local i = 1
-	while love.filesystem.exists("records/"..i) do
-		i = i+1
-	end
-	recordFolder = "records/"..i
-	love.filesystem.mkdir(recordFolder)
-	storeInfos(recordFolder.."/infos.txt")
-	lastFrameNb = 0
-	recording = true
-end
-
-function stopRecording()
-	recording = false
-	lastFrameNb = 0
-	recordFolder = ""
-end
-
-function love.keyreleased(k,u)
-	if k == 'lctrl' then
-		zoom = 1
-		mustRedraw = true
-	end
-end
 function love.keypressed(k,u)
-	if k == 'lctrl' then
-		zoom = 10
-		mustRedraw = true
-	end
-	if k == 'tab' then
-		currFractNb = ((currFractNb)%(#fractals))+1
-		currFract = fractals[currFractNb]
-		maxIterationsMulti = 1
-		thresholdMulti = 1
-		loadParameters(currFract)
-	end
-	if k == 'f2' then
-		storeScreenShot()
-	end
-	if k == 'f3' then
-		if recording then
-			stopRecording()
-		else
-			startRecording()
-		end
-	end
-	if k == 'f4' then
-		slowTime = not slowTime
-	end
 	if k == 'escape' then
 		love.event.quit()
 	end
-	if k == 'return' then
-		nextView()
-	end
-	if k == 'a' then
-		animate = not animate
-	end
-end
 
-function vectorFromSpherical(r, theta, phi)
-	return vector(	r*math.cos(phi)*math.sin(theta),
-			r*math.sin(phi)*math.sin(theta),
-			r*math.cos(theta))
-end
-
-function love.mousepressed(x,y,button)
-	if button == "wu" then
-		maxIterationsMulti = maxIterationsMulti*1.2
-		thresholdMulti = thresholdMulti/2
-		mustRedraw = true
-	elseif button == "wd" then
-		maxIterationsMulti = maxIterationsMulti/1.2
-		thresholdMulti = thresholdMulti*2
-		mustRedraw = true
-	else
-		focus = not focus
-		if focus then
-			mouse.x,mouse.y = love.mouse.getX(),love.mouse.getY()
-			love.mouse.setGrab(true)
-			love.mouse.setVisible(false)
-			render.updateShader(currFract)
-		else
-			love.mouse.setGrab(false)
-			love.mouse.setVisible(true)
-		end
-	end
 end

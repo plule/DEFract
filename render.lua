@@ -3,32 +3,31 @@ vector = require("vector3d")
 render = {}
 
 function render.load()
-	render.rt = { dim = {love.graphics.getWidth(), love.graphics.getHeight()}}
-	render.hq = { dim = {love.graphics.getWidth(), love.graphics.getHeight()},
-		threshold=0.02,maxIterations=100}
-	render.hd = { dim = {1024,1024}, threshold=0.02,maxIterations=100}
+	render.threshold=0.02
+	render.maxIterations=100
+	render.dim = love
 	render.codeEffect = love.filesystem.read('glsl/effect.frag')
 	render.animationHeader = love.filesystem.read('glsl/animationHeader.frag')
 	render.codeColor = love.filesystem.read('glsl/simpleColor.frag')
 	render.codeHeader = love.filesystem.read('glsl/codeHeader.frag')
-	render.shaders = {}
+	render.shader = nil
 end
 
 function render.updateShader(fractal)
 	fractal.code = love.filesystem.load(fractal.path)().code
 	render.lastFractal = nil
-	render.shaders = {}
+	render.shader = nil
 end
 
-function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
+function render.renderTo(fractal, canvas)
 	if render.lastFractal ~= fractal then
 		render.lastFractal = fractal
-		render.shaders = {}
+		render.shader = nil
 	end
-	if not render.shaders[quality] then
-		render.shaders[quality] = render.getPixelEffect(fractal.code, unpack(render[quality].dim))
+	if not render.shader then
+		render.shader = render.getPixelEffect(fractal.code, unpack(render.dim))
 	end
-	local shader = render.shaders[quality]
+	local shader = render.shader
 	canvas:clear()
 	love.graphics.setCanvas(canvas)
 	if type(shader) == "string" then
@@ -38,18 +37,18 @@ function render.renderTo(fractal, canvas, quality, maxIterations, threshold)
 		love.graphics.print(shader,0,15)
 		focus = false
 	else
-		local width,height = unpack(render[quality].dim)
-		local preset = fractal[quality] or {}
+		local width,height = unpack(render.dim)
+		local preset = fractal.quality or {}
 		love.graphics.setPixelEffect(shader)
 		
-		local maxIterations = maxIterations or preset.maxIterations or render[quality].maxIterations
-		local threshold = threshold or preset.threshold or render[quality].threshold
+		local maxIterations = preset.maxIterations or render.maxIterations
+		local threshold = preset.threshold or render.threshold
 		shader:send("maxIterations", maxIterations*maxIterationsMulti)
 		shader:send("threshold",threshold*thresholdMulti)
 		
 		love.graphics.setPixelEffect(shader)
 		local normalizedDir = vectorFromSpherical(1,direction.theta,direction.phi)
-		ratio = height/render.rt.dim[2]
+		ratio = height/render.dim[2]
 		
 		local origin = position+normalizedDir*projDist*ratio*zoom
 		shader:send("position", {position:unpack()})
@@ -99,7 +98,7 @@ function render.getPixelEffect(code, width, height)
 end
 
 function render.computeFractalCode(code, width, height, animated)
-	local finalCode = render.codeHeader:format(width, height)
+	local finalCode = (render.codeHeader):format(width, height)
 	if(animated) then
 		finalCode = finalCode..render.animationHeader
 	end

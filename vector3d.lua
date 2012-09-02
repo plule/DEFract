@@ -52,8 +52,16 @@ function vector:unpack()
 	return self.x, self.y, self.z
 end
 
+function vector:table()
+	return {self.x, self.y, self.z}
+end
+
 function vector:__tostring()
-	return "("..tonumber(self.x)..","..tonumber(self.y)..","..tonumber(self.z)..")"
+	return "("..round(tonumber(self.x),2)..","..round(tonumber(self.y),2)..","..round(tonumber(self.z),2)..")"
+end
+
+function vector:to_s()
+	return self:__tostring()
 end
 
 function vector.__unm(a)
@@ -204,6 +212,15 @@ function vector:cross(v)
 	return new(x,y,z)
 end
 
+
+
+function round(val, decimal)
+	if (decimal) then
+		return math.floor( (val * 10^decimal) + 0.5) / (10^decimal)
+	else
+		return math.floor(val+0.5)
+	end
+end
 
 -- the module
 return setmetatable({new = new, isvector = isvector},
