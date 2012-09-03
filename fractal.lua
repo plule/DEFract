@@ -15,11 +15,20 @@ Fractal = Class{
 	end}
 
 function Fractal:generateShader()
-	self.animated = false
-	local shaderCode = render.computeFractalCode(self.code, Width, Height, false)
+	local shaderCode = render.computeFractalCode(self.code, Width, Height, self.animated)
+	print(shaderCode)
 	self.shader = love.graphics.newPixelEffect(shaderCode)
 	self.error = nil
---todo
+end
+
+local function getParameter(string)
+	params = string:split(";")
+	return {	
+		value	= tonumber(params[1]),
+		min		= tonumber(params[2]),
+		max		= tonumber(params[3]),
+		step	= tonumber(params[4])
+		   }
 end
 
 function Fractal:parse()
@@ -35,16 +44,30 @@ function Fractal:parse()
 			self.name = value
 		elseif key == "description" then
 			self.description = value
+		elseif key == "animated" and value == "true" then
+			self.animated = true
 		elseif key == "extern" then
-			local splitValue = value:split(";")
-			parameters[splitValue[1]] = {
-				value = tonumber(splitValue[2]),
-				min = tonumber(splitValue[3]),
-				max = tonumber(splitValue[4]),
-				step = tonumber(splitValue[5])
-			}
-			code = code.."extern float "..splitValue[1]..";\n"
+			local type,name,params = string.match(value, "(%w+)%s(%w+)%s(.+)")
+			if type == "float" then
+				parameters[name] = getParameter(params)
+			else
+				local normalized = false
+				params = params:split(" ")
+				values = {}
+				for _,param in ipairs(params) do
+					if param == "normalized" then
+						normalized = true
+						print("yaiea")
+					end
+					table.insert(values,getParameter(param))
+				end
+				parameters[name] = values
+				parameters[name].normalized = normalized
+			end
+			parameters[name].type = type
+			code = code.."extern "..type.." "..name..";\n"
 		elseif key == "view" then
+			print(value)
 			local splitValue = value:split(";")
 			local position = {
 				tonumber(splitValue[1]), -- x
@@ -84,12 +107,20 @@ function Fractal:update(dt)
 	end
 end
 
-function Fractal:draw(camera)
+function Fractal:draw()
 	if not self.error then
 		local shader = self.shader
 		local camera = self.camera
 		for name,desc in pairs(self.parameters) do
-			shader:send(name, desc.value)
+			if desc.type == "float" then
+				shader:send(name, desc.value)
+			elseif desc.type == "vec3" then
+				local vec = vector(desc[1].value,desc[2].value,desc[3].value)
+				if desc.normalized then
+					vec:normalize_inplace()
+				end
+				shader:send(name,vec:table())
+			end
 		end
 		shader:send("maxIterations", camera:getMaxIterations())
 		shader:send("threshold", camera:getThreshold())
@@ -100,10 +131,10 @@ function Fractal:draw(camera)
 		if self.animated then
 			shader:send("time", self.time)
 		end
-		
+
 		love.graphics.setPixelEffect(self.shader)
 		love.graphics.setColor(0,0,0,255)
-		love.graphics.rectangle("fill",0,0,Width,Height)
+		love.graphics.rectangle("fill",0,0,Width,Height)		
 		love.graphics.setPixelEffect()
 		self.camera:draw()
 	else
@@ -119,8 +150,7 @@ function Fractal:to_s()
 	print(self.description)
 	print("Parameters :")
 	for name,desc in pairs(self.parameters) do
-		print(name.." :")
-		print(desc.value,desc.min,desc.max,desc.step)
+		print(name.." : "..desc.type)
 	end
 	print("Code :")
 	print(self.code)

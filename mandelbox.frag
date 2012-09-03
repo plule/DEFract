@@ -1,12 +1,12 @@
 #name Mandelbox
 #description The Mandelbox (taken from http://blog.hvidtfeldts.net/index.php/2011/11/distance-estimated-3d-fractals-vi-the-mandelbox/)
-#view -28;-28;12;2;0;1.57;1;0.005;58
+#view -28;-28;12;2;0.785;1.57;1;0.005;58
 
-#extern Iterations;10;5;100;1
-#extern Scale;2;0.5;5
-#extern minRadius2;0.9;0.5;10
-#extern fixedRadius2;5;0.1;10
-#extern foldingLimit;2;1;5
+#extern float Iterations 20;5;100;1
+#extern float Scale 2;0.5;5
+#extern float minRadius2 0.9;0.5;10
+#extern float fixedRadius2 5;0.1;10
+#extern float foldingLimit 2;1;5
 
 //#define minRadius2 (minRadius*minRadius)
 //#define fixedRadius2 (fixedRadius*fixedRadius)

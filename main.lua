@@ -5,8 +5,9 @@ function love.load()
 	Width = love.graphics.getWidth()
 	Height = love.graphics.getHeight()
 	render.load()
-	fractal = Fractal("mandelbox.frag")
-
+	fractal = Fractal("examples/spheres.frag")
+--	fractal = Fractal("examples/kaleidoscopicIFS.frag")
+	--fractal = Fractal("mandelbox.frag")
 	mouse = {}
 	mouse.x,mouse.y = love.mouse.getPosition()
 	love.mouse.setGrab(true)
@@ -24,6 +25,7 @@ function vectorFromSpherical(r, theta, phi)
 end
 
 function love.update(dt)
+	fractal:update(dt)
 	local camera = fractal.camera
 	if love.keyboard.isDown("up") then
 		camera:forward(dt)
