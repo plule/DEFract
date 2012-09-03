@@ -5,8 +5,8 @@ function love.load()
 	Width = love.graphics.getWidth()
 	Height = love.graphics.getHeight()
 	render.load()
-	fractal = Fractal("examples/spheres.frag")
---	fractal = Fractal("examples/kaleidoscopicIFS.frag")
+--	fractal = Fractal("examples/menger-animated.frag")
+	fractal = Fractal("examples/kaleidoscopicIFS.frag")
 	--fractal = Fractal("mandelbox.frag")
 	mouse = {}
 	mouse.x,mouse.y = love.mouse.getPosition()
@@ -33,6 +33,12 @@ function love.update(dt)
 	if love.keyboard.isDown("down") then
 		camera:forward(-dt)
 	end
+	if love.keyboard.isDown("left") then
+		camera:left(dt)
+	end
+	if love.keyboard.isDown("right") then
+		camera:left(-dt)
+	end
 	if love.keyboard.isDown("pageup") then
 		camera.projDist = camera.projDist + dt
 	end
@@ -42,7 +48,7 @@ function love.update(dt)
 
 	if (mouse.x ~= love.mouse.getX() or mouse.y ~= love.mouse.getY()) then
 		
-		camera.phi = camera.phi-(love.mouse.getY()-mouse.y)/100
+		camera.phi = camera.phi+(love.mouse.getY()-mouse.y)/100
 		camera.theta = camera.theta-(love.mouse.getX()-mouse.x)/100
 		if(camera.phi > math.pi) then camera.phi = math.pi end
 		if(camera.phi < 0) then camera.phi = 0 end

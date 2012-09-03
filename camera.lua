@@ -52,6 +52,11 @@ function Camera:forward(dt)
 	self.position = self.position + direction*dt
 end
 
+function Camera:left(dt)
+	local direction = vectorFromSpherical(self.speed, self.theta+math.pi/2,math.pi/2)
+	self.position = self.position + direction*dt
+end
+
 function Camera:draw()
 	love.graphics.setColor(255,255,0)
 	love.graphics.print("theta "..self.theta,10, 10)

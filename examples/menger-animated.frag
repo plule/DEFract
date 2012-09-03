@@ -1,10 +1,12 @@
 #name Rotated Menger Sponge
 #description Copied from Fragmentarium code
 
-#view -1.5371;2.15;1.177;70;2.04;-7.23;1;0.5;40
+#view -1.5371;2.15;1.177;70;0;1.57;1;0.5;40
 
 mat3 rot;
 float RotAngle = mod(time*10.,360.0);
+
+#animated true
 
 #extern float Iterations 20;5;100
 #extern float Scale 3;0.1;10
@@ -40,3 +42,4 @@ float DE(vec3 z)
 	}
 
 	return abs(length(z)) * pow(Scale, float(-n));
+}
