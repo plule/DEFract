@@ -32,7 +32,7 @@ end
 
 -- Y vector of the projection plane
 function Camera:getPlaneY()
-	return vectorFromSpherical(Width/1000, self.theta, self.phi+math.pi/2)
+	return vectorFromSpherical(Width/1000, self.theta, self.phi-math.pi/2)
 end
 
 -- Origin of the projection plane
