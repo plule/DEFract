@@ -16,7 +16,6 @@ Fractal = Class{
 
 function Fractal:generateShader()
 	local shaderCode = render.computeFractalCode(self.code, Width, Height, self.animated)
-	print(shaderCode)
 	self.shader = love.graphics.newPixelEffect(shaderCode)
 	self.error = nil
 end
@@ -57,7 +56,6 @@ function Fractal:parse()
 				for _,param in ipairs(params) do
 					if param == "normalized" then
 						normalized = true
-						print("yaiea")
 					end
 					table.insert(values,getParameter(param))
 				end
@@ -67,7 +65,6 @@ function Fractal:parse()
 			parameters[name].type = type
 			code = code.."extern "..type.." "..name..";\n"
 		elseif key == "view" then
-			print(value)
 			local splitValue = value:split(";")
 			local position = {
 				tonumber(splitValue[1]), -- x

@@ -6,16 +6,43 @@ function love.load()
 	Height = love.graphics.getHeight()
 	render.load()
 --	fractal = Fractal("examples/menger-animated.frag")
-	fractal = Fractal("examples/kaleidoscopicIFS.frag")
+--	fractal = Fractal("examples/kaleidoscopicIFS.frag")
 	--fractal = Fractal("mandelbox.frag")
 	mouse = {}
 	mouse.x,mouse.y = love.mouse.getPosition()
 	love.mouse.setGrab(true)
 	love.mouse.setVisible(false)
+
+	love.filesystem.mkdir("fractals")
+	love.filesystem.mkdir("records")
+	fractals = {}
+	
+	examples = love.filesystem.enumerate("examples")
+	users = love.filesystem.enumerate("fractals")
+	-- Copy of all the fractals to user's dir
+	for _,file in ipairs(examples) do
+		if file:sub(-5) == ".frag" and not table.contains(users,file) then
+			src = love.filesystem.newFile("examples/"..file)
+			src:open('r')
+			dest = love.filesystem.newFile("fractals/"..file)
+			dest:open('w')
+			dest:write(src:read())
+		end
+	end
+
+	-- Load all this
+	for _,file in ipairs(love.filesystem.enumerate("fractals")) do
+		if file:sub(-5) == ".frag" then
+			table.insert(fractals, Fractal("fractals/"..file))
+		end
+	end
+
+	currFractIndex = 1
+	currFractal = fractals[currFractIndex]
 end
 
 function love.draw()
-	fractal:draw()
+	currFractal:draw()
 end
 
 function vectorFromSpherical(r, theta, phi)
@@ -25,8 +52,8 @@ function vectorFromSpherical(r, theta, phi)
 end
 
 function love.update(dt)
-	fractal:update(dt)
-	local camera = fractal.camera
+	currFractal:update(dt)
+	local camera = currFractal.camera
 	if love.keyboard.isDown("up") then
 		camera:forward(dt)
 	end
@@ -67,5 +94,17 @@ function love.keypressed(k,u)
 	if k == 'escape' then
 		love.event.quit()
 	end
+	if k == 'tab' then
+		currFractIndex = ((currFractIndex)%(#fractals))+1
+		currFractal = fractals[currFractIndex]
+	end
+end
 
+function table.contains(table, element)
+	for _, value in pairs(table) do
+		if value == element then
+			return true
+		end
+	end
+	return false
 end
