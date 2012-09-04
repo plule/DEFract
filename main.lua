@@ -1,17 +1,20 @@
 require "fractal"
 require "render"
+require "gui"
+
+
+
 
 function love.load()
 	Width = love.graphics.getWidth()
 	Height = love.graphics.getHeight()
+	Focus = true
 	render.load()
 --	fractal = Fractal("examples/menger-animated.frag")
 --	fractal = Fractal("examples/kaleidoscopicIFS.frag")
 	--fractal = Fractal("mandelbox.frag")
 	mouse = {}
 	mouse.x,mouse.y = love.mouse.getPosition()
-	love.mouse.setGrab(true)
-	love.mouse.setVisible(false)
 
 	love.filesystem.mkdir("fractals")
 	love.filesystem.mkdir("records")
@@ -39,10 +42,30 @@ function love.load()
 
 	currFractIndex = 1
 	currFractal = fractals[currFractIndex]
+	gui = Gui()
+	gui.parameters = fractals[currFractIndex].parameters
+end
+
+local function toggleFocus()
+	Focus = not Focus
+	mouse.x,mouse.y = love.mouse.getPosition()
+end
+
+local function setFocus()
+	Focus = true
+	mouse.x,mouse.y = love.mouse.getPosition()
+end
+
+local function releaseFocus()
+	Focus = false
+	mouse.x,mouse.y = love.mouse.getPosition()
 end
 
 function love.draw()
 	currFractal:draw()
+	if not Focus then
+		gui:draw()
+	end
 end
 
 function vectorFromSpherical(r, theta, phi)
@@ -52,28 +75,14 @@ function vectorFromSpherical(r, theta, phi)
 end
 
 function love.update(dt)
+	love.mouse.setGrab(Focus)
+	love.mouse.setVisible(not Focus)
+	gui.parameters = fractals[currFractIndex].parameters
+	gui:update(dt)
 	currFractal:update(dt)
 	local camera = currFractal.camera
-	if love.keyboard.isDown("up") then
-		camera:forward(dt)
-	end
-	if love.keyboard.isDown("down") then
-		camera:forward(-dt)
-	end
-	if love.keyboard.isDown("left") then
-		camera:left(dt)
-	end
-	if love.keyboard.isDown("right") then
-		camera:left(-dt)
-	end
-	if love.keyboard.isDown("pageup") then
-		camera.projDist = camera.projDist + dt
-	end
-	if love.keyboard.isDown("pagedown") then
-		camera.projDist = camera.projDist - dt
-	end
 
-	if (mouse.x ~= love.mouse.getX() or mouse.y ~= love.mouse.getY()) then
+	if Focus and (mouse.x ~= love.mouse.getX() or mouse.y ~= love.mouse.getY()) then
 		
 		camera.phi = camera.phi+(love.mouse.getY()-mouse.y)/100
 		camera.theta = camera.theta-(love.mouse.getX()-mouse.x)/100
@@ -81,12 +90,34 @@ function love.update(dt)
 		if(camera.phi < 0) then camera.phi = 0 end
 		if(camera.theta < 0) then camera.theta = 2*math.pi end
 		if(camera.theta > 2*math.pi) then camera.theta = 0 end
-		mouse.x,mouse.y = love.mouse.getX(),love.mouse.getY()
+		mouse.x,mouse.y = love.mouse.getPosition()
 		if mouse.x == 0 then mouse.x = Width-2 end
 		if mouse.x == Width-1 then mouse.x = 1 end
 		if mouse.y == 0 then mouse.y = Height-2 end
 		if mouse.y == Height-1 then mouse.y = 1 end
 		love.mouse.setPosition(mouse.x, mouse.y)
+	end
+	if love.keyboard.isDown("up") then
+		setFocus()
+		camera:forward(dt)
+	end
+	if love.keyboard.isDown("down") then
+		setFocus()
+		camera:forward(-dt)
+	end
+	if love.keyboard.isDown("left") then
+		setFocus()
+		camera:left(dt)
+	end
+	if love.keyboard.isDown("right") then
+		setFocus()
+		camera:left(-dt)
+	end
+	if love.keyboard.isDown("pageup") then
+		camera.projDist = camera.projDist + dt
+	end
+	if love.keyboard.isDown("pagedown") then
+		camera.projDist = camera.projDist - dt
 	end
 end
 
@@ -97,6 +128,9 @@ function love.keypressed(k,u)
 	if k == 'tab' then
 		currFractIndex = ((currFractIndex)%(#fractals))+1
 		currFractal = fractals[currFractIndex]
+	end
+	if k == 'lctrl' then
+		toggleFocus()
 	end
 end
 

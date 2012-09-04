@@ -56,11 +56,14 @@ function Fractal:parse()
 				for _,param in ipairs(params) do
 					if param == "normalized" then
 						normalized = true
+					else
+						table.insert(values,getParameter(param))
 					end
-					table.insert(values,getParameter(param))
 				end
-				parameters[name] = values
-				parameters[name].normalized = normalized
+				parameters[name] = {
+					values = values,
+					normalized = normalized
+				}
 			end
 			parameters[name].type = type
 			code = code.."extern "..type.." "..name..";\n"
@@ -112,7 +115,7 @@ function Fractal:draw()
 			if desc.type == "float" then
 				shader:send(name, desc.value)
 			elseif desc.type == "vec3" then
-				local vec = vector(desc[1].value,desc[2].value,desc[3].value)
+				local vec = vector(desc.values[1].value,desc.values[2].value,desc.values[3].value)
 				if desc.normalized then
 					vec:normalize_inplace()
 				end
@@ -133,7 +136,7 @@ function Fractal:draw()
 		love.graphics.setColor(0,0,0,255)
 		love.graphics.rectangle("fill",0,0,Width,Height)		
 		love.graphics.setPixelEffect()
-		self.camera:draw()
+--		self.camera:draw()
 	else
 		love.graphics.setPixelEffect()
 		love.graphics.setColor(255,255,255)
