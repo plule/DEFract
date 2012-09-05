@@ -1,12 +1,12 @@
 #name Kaleidoscopic IFS
 #description Taken from http://www.fractalforums.com/3d-fractal-generation/kaleidoscopic-%28escape-time-ifs%29/
 
-#view 6.2;4.8;7.2;2;3.79;2.3;1;0.005;100
+#view 6.2;4.8;7.2;2;3.79;2.3;1;0.0002;100
 
 #extern float Iterations 20;5;100;1
 #extern float scale 2;0.1;10
-#extern vec3 offset 1.1;-5;5 0.61803399;0;5 0;-5;5 normalized
-#extern vec3 n1 -1.61803399;-5;5 0.61803399;0;5 1;-5;5 normalized
+#extern vec3 offset 1.1;0;10 0.61803399;0;10 0;0;10 normalized
+#extern vec3 n1 -1.61803399;-5;5 0.61803399;-5;5 1;-5;5 normalized
 #extern vec3 n2 1;-5;5 -1.61803399;-5;5 2.61803399;-5;5 normalized
 #extern float bailoutSquared 1000000000.0;100000000.0;10000000000.0
 

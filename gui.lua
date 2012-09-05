@@ -33,7 +33,7 @@ function Gui:update(dt)
 end
 
 function Gui:draw()
-	love.graphics.setColor(0,0,0,200)
+	love.graphics.setColor(0,0,0,100)
 	love.graphics.rectangle("fill",0,0,260,Height)
 	gui.core.draw()
 end

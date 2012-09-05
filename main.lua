@@ -78,7 +78,10 @@ function love.update(dt)
 	love.mouse.setGrab(Focus)
 	love.mouse.setVisible(not Focus)
 	gui.parameters = fractals[currFractIndex].parameters
-	gui:update(dt)
+
+	if not Focus then
+		gui:update(dt)
+	end
 	currFractal:update(dt)
 	local camera = currFractal.camera
 
