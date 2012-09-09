@@ -79,17 +79,31 @@ function Parameter:quickieUpdate(gui,showName)
 	end
 end
 
-function Parameter:getValue()
+function Parameter:getValue(raw)
 	local type = self.type
 	if type == "float" or type == "select" then
 		return self.value
 	elseif type == "int" then
+		if raw then return self.value end
 		return math.floor(self.value)
 	elseif type == "vec3" then
 		local vec = vector(self.values[1].value,self.values[2].value,self.values[3].value)
-		if self.normalized then
+		if self.normalized and not raw then
 			vec:normalize_inplace()
 		end
 		return vec:table()
+	end
+end
+
+function Parameter:setValue(value)
+	local type = self.type
+	if type == "float" or type == "select" then
+		self.value = value
+	elseif type == "int" then
+		self.value = math.floor(value)
+	elseif type == "vec3" then
+		self.values[1].value = value[1]
+		self.values[2].value = value[2]
+		self.values[3].value = value[3]
 	end
 end
