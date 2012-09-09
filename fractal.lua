@@ -11,6 +11,7 @@ Fractal = Class{
 		self.error = "No shader generated"
 		self.title = "Parameters of the Fractal"
 		self.parameters = {}
+		self:load()
 	end}
 
 function Fractal:load()
@@ -19,6 +20,8 @@ function Fractal:load()
 	self.error = nil
 	self.animated = fractal.animated
 	self.parameters = fractal.parameters
+	self.name = fractal.name
+	self.description = fractal.description
 	Camera:update(unpack(fractal.positions[1]))
 	self.error = nil
 end
@@ -28,7 +31,8 @@ function Fractal:reload()
 	self.shader = love.graphics.newPixelEffect(fractal.code)
 	self.error = nil
 	self.animated = fractal.animated
-	
+	self.name = fractal.name
+	self.description = fractal.description
 	for _,newParameter in pairs(fractal.parameters) do
 		for _,oldParameter in pairs(self.parameters) do
 			if newParameter.shader and newParameter.kname == oldParameter.kname and newParameter.type == oldParameter.type then

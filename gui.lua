@@ -8,14 +8,8 @@ function Gui:load()
 	gui.group.default.spacing = 3
 end
 
-function Gui:drawParameter(parameter)
-	gui.group.push{grow = "right"}
-	gui.Slider{info = parameter}
-	gui.Label{text = string.format("%.2f",parameter.value), size = {50,10}}
-	gui.group.pop{}
-end
-
 function Gui:title(text)
+	love.graphics.setFont(MediumFont)
 	gui.group.push{grow = "down", spacing=10}
 	gui.Label{text = ""}
 	gui.Label{text = text}
@@ -25,9 +19,11 @@ end
 
 function Gui:update(dt)
 	gui.group.push{grow = "down", pos = {5,5}}
-	
+	love.graphics.setFont(SmallFont)
+	gui.Label{text = "FPS : "..tostring(love.timer.getFPS())}
 	for _,parametrable in pairs(self.parametrables) do
-		Gui:title(parametrable.title)
+		if parametrable.title then Gui:title(parametrable.title) end
+		love.graphics.setFont(SmallFont)
 		for _,parameter in pairs(parametrable.parameters) do
 			parameter:quickieUpdate(gui,true)
 		end

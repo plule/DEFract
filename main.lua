@@ -1,14 +1,36 @@
 require "fractal"
 require "parser"
 require "gui"
+Timer = require "hump.timer"
+require "parameter"
 
 function debug(...)
 --	print("[debug]",...)
 end
 
+local function printTitle()
+	titleAlpha = 255
+	if titleTimer then Timer.cancel(titleTimer) end
+	fader = nil
+	titleTimer = Timer.add(2,
+     function()
+         titleTimer = Timer.add(1, function() titleAlpha = 0 end)
+		 fader = Timer.Interpolator(1, function(frac) titleAlpha = 255*(1-frac) end)
+	 end)
+end
+
+local function switchTo(fractal)
+	fractal:load()
+	currFractal = fractal
+	printTitle()
+end
+
 function love.load()
 	Width = love.graphics.getWidth()
 	Height = love.graphics.getHeight()
+	BigFont = love.graphics.newFont('LinBiolinum_R.ttf', 40)
+	SmallFont = love.graphics.newFont('Cantarell-Regular.otf',12)
+	MediumFont = love.graphics.newFont('Cantarell-Regular.otf',17)
 	Focus = true
 	Parser.load()
 	Camera:load()
@@ -40,15 +62,19 @@ function love.load()
 		end
 	end
 
+	fractalSelect = Parameter
+	{
+		name = "Fractal Selection",
+		type = "select",
+		choices = fractals,
+		action = switchTo
+	}
+
 	currFractIndex = 1
 	currFractal = fractals[currFractIndex]
 	currFractal:load()
 	Gui:load()
-end
-
-local function switchTo(fractal)
-	fractal:load()
-	currFractal = fractal
+	printTitle()
 end
 
 local function toggleFocus()
@@ -71,6 +97,13 @@ function love.draw()
 	if not Focus then
 		Gui:draw()
 	end
+	love.graphics.setFont(BigFont)
+	local whiteAlpha = 255 - (255-titleAlpha)*1.5
+	if whiteAlpha < 0 then whiteAlpha = 0 end
+	love.graphics.setColor(255,255,255, whiteAlpha)
+	love.graphics.printf(currFractal.name, 0, Height-50, Width, 'center')
+	love.graphics.setColor(0,0,0, titleAlpha)
+	love.graphics.printf(currFractal.name, -1, Height-51, Width, 'center')
 end
 
 function vectorFromSpherical(r, theta, phi)
@@ -80,9 +113,11 @@ function vectorFromSpherical(r, theta, phi)
 end
 
 function love.update(dt)
+	Timer.update(dt)
+	if fader then fader(dt) end
 	love.mouse.setGrab(Focus)
 	love.mouse.setVisible(not Focus)
-	Gui.parametrables = {Camera,fractals[currFractIndex]}
+	Gui.parametrables = {Camera,fractals[currFractIndex], {parameters={fractalSelect}}}
 
 	if not Focus then
 		Gui:update(dt)
@@ -129,6 +164,7 @@ function love.update(dt)
 	end
 end
 
+
 function love.keypressed(k,u)
 	if k == 'escape' then
 		love.event.quit()
@@ -137,6 +173,7 @@ function love.keypressed(k,u)
 		currFractIndex = ((currFractIndex)%(#fractals))+1
 		currFractal = fractals[currFractIndex]
 		currFractal:load()
+		printTitle()
 	end
 	if k == 'lctrl' then
 		toggleFocus()

@@ -72,7 +72,7 @@ function Parameter:quickieUpdate(gui,showName)
 		for _,choice in ipairs(self.choices) do
 			if gui.Button{text = choice.name} then
 				self.value = choice
-				self.action(choice.value)
+				self.action(choice)
 			end
 		end
 		gui.group.pop{}
