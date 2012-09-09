@@ -1,18 +1,18 @@
 require "fractal"
-require "render"
+require "parser"
 require "gui"
 
-
-
+function debug(...)
+--	print("[debug]",...)
+end
 
 function love.load()
 	Width = love.graphics.getWidth()
 	Height = love.graphics.getHeight()
 	Focus = true
-	render.load()
---	fractal = Fractal("examples/menger-animated.frag")
---	fractal = Fractal("examples/kaleidoscopicIFS.frag")
-	--fractal = Fractal("mandelbox.frag")
+	Parser.load()
+	Camera:load()
+	
 	mouse = {}
 	mouse.x,mouse.y = love.mouse.getPosition()
 
@@ -42,8 +42,14 @@ function love.load()
 
 	currFractIndex = 1
 	currFractal = fractals[currFractIndex]
+	currFractal:load()
 	gui = Gui()
 	gui.parameters = fractals[currFractIndex].parameters
+end
+
+local function switchTo(fractal)
+	fractal:load()
+	currFractal = fractal
 end
 
 local function toggleFocus()
@@ -77,13 +83,13 @@ end
 function love.update(dt)
 	love.mouse.setGrab(Focus)
 	love.mouse.setVisible(not Focus)
-	gui.parameters = fractals[currFractIndex].parameters
+	gui.parametrables = {fractals[currFractIndex],Camera}
 
 	if not Focus then
 		gui:update(dt)
 	end
 	currFractal:update(dt)
-	local camera = currFractal.camera
+	local camera = Camera
 
 	if Focus and (mouse.x ~= love.mouse.getX() or mouse.y ~= love.mouse.getY()) then
 		
@@ -117,10 +123,10 @@ function love.update(dt)
 		camera:left(-dt)
 	end
 	if love.keyboard.isDown("pageup") then
-		camera.projDist = camera.projDist + dt
+		camera.projDist.value = camera.projDist.value + dt
 	end
 	if love.keyboard.isDown("pagedown") then
-		camera.projDist = camera.projDist - dt
+		camera.projDist.value = camera.projDist.value - dt
 	end
 end
 
@@ -131,9 +137,13 @@ function love.keypressed(k,u)
 	if k == 'tab' then
 		currFractIndex = ((currFractIndex)%(#fractals))+1
 		currFractal = fractals[currFractIndex]
+		currFractal:load()
 	end
 	if k == 'lctrl' then
 		toggleFocus()
+	end
+	if k == 'f2' then
+		storeScreenShot()
 	end
 end
 
@@ -144,4 +154,13 @@ function table.contains(table, element)
 		end
 	end
 	return false
+end
+
+function storeScreenShot()
+	local i = 1
+	while love.filesystem.exists("DEFract_"..i..".jpg") do
+		i = i+1
+	end
+	local name = "DEFract_"..i
+	love.graphics.newScreenshot():encode(name..".jpg")
 end

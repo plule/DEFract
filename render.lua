@@ -1,18 +1,25 @@
-vector = require("vector3d")
+-- vector = require("vector3d")
 
-render = {}
+-- render = {}
 
-function render.load()
-	render.threshold=0.02
-	render.maxIterations=100
-	render.dim = love
-	render.codeEffect = love.filesystem.read('glsl/effect.frag')
-	render.animationHeader = love.filesystem.read('glsl/animationHeader.frag')
-	render.codeColor = love.filesystem.read('glsl/simpleColor.frag')
-	render.codeHeader = love.filesystem.read('glsl/codeHeader.frag')
-	render.shader = nil
-end
+-- function render.load()
+-- 	render.threshold=0.02
+-- 	render.maxIterations=100
+-- 	render.dim = love
+-- 	render.codeEffect = love.filesystem.read('glsl/effect.frag')
+-- 	render.animationHeader = love.filesystem.read('glsl/animationHeader.frag')
+-- 	render.coloringCodes = {
+-- 		vrldColor = love.filesystem.read('glsl/vrldColor.frag'),
+-- 		blackAndWhite = love.filesystem.read('glsl/simpleColor.frag')
+-- 	}
+-- 	render.codeColor = render.coloringCodes.vrldColor
+-- 	render.codeVrldColor = love.filesystem.read('glsl/vrldColor.frag')
+-- 	render.codeHeader = love.filesystem.read('glsl/codeHeader.frag')
+-- 	render.shader = nil
+-- 	render.animated = false
+-- end
 
+--[[
 function render.updateShader(fractal)
 	fractal.code = love.filesystem.load(fractal.path)().code
 	render.lastFractal = nil
@@ -66,9 +73,10 @@ function render.renderTo(fractal, canvas)
 		love.graphics.setPixelEffect()
 	end
 	love.graphics.setCanvas()
-end
+	end
+]]
 
-function render.getPixelEffect(code, width, height)
+--[[function render.getPixelEffect(code, width, height)
 	-- Try to build animated code
 	state, ret = pcall(function()
 		return love.graphics.newPixelEffect(
@@ -95,13 +103,13 @@ function render.getPixelEffect(code, width, height)
 		)
 	end
 	return ret
-end
+	end]]
 
-function render.computeFractalCode(code, width, height, animated)
-	local finalCode = (render.codeHeader):format(width, height)
-	if(animated) then
-		finalCode = finalCode..render.animationHeader
-	end
-	finalCode = finalCode..code..render.codeColor..render.codeEffect
-	return finalCode
-end
+-- function render.computeFractalCode(code, width, height, animated, coloring)
+-- 	local finalCode = (render.codeHeader):format(width, height)
+-- 	if(animated) then
+-- 		finalCode = finalCode..render.animationHeader
+-- 	end
+-- 	finalCode = finalCode..code..coloring..render.codeEffect
+-- 	return finalCode
+-- end

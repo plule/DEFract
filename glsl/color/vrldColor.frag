@@ -1,3 +1,6 @@
+#name Psychedelic colors by vrld
+#animated true
+
 number _hue(number s, number t, number h)
 {
 	h = mod(h, 1.);

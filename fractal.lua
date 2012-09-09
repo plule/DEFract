@@ -1,5 +1,5 @@
-require "hump.class"
-require "render"
+Class = require "hump.class"
+require "parser"
 require "camera"
 
 Fractal = Class{
@@ -9,89 +9,26 @@ Fractal = Class{
 		self.lastCheckAge = 0
 		self.time = 0
 		self.error = "No shader generated"
-		self:parse()
-		self:generateShader()
-		self.camera = Camera(unpack(self.positions[1]))
+		self.title = "Parameters of the Fractal"
 	end}
 
-function Fractal:generateShader()
-	local shaderCode = render.computeFractalCode(self.code, Width, Height, self.animated)
-	self.shader = love.graphics.newPixelEffect(shaderCode)
+function Fractal:load()
+	local fractal = Parser.computeFractalCode(self.path, Camera.parameters.coloring:getValue())
+	self.shader = love.graphics.newPixelEffect(fractal.code)
+	self.error = nil
+	self.animated = fractal.animated
+	self.parameters = fractal.parameters
+	Camera:update(unpack(fractal.positions[1]))
 	self.error = nil
 end
 
-local function getParameter(string)
-	params = string:split(";")
-	return {	
-		value	= tonumber(params[1]),
-		min		= tonumber(params[2]),
-		max		= tonumber(params[3]),
-		step	= tonumber(params[4])
-		   }
-end
-
-function Fractal:parse()
-	local file = love.filesystem.newFile(self.path)
-	file:open('r')
-	local code = ""
-	local parameters = {}
-	local positions = {}
-	self.animated = false
-	for line in file:lines() do
-		local key,value = string.match(line, "#(%w+)%s(.+)")
-		if key == "name" then
-			self.name = value
-		elseif key == "description" then
-			self.description = value
-		elseif key == "animated" and value == "true" then
-			self.animated = true
-		elseif key == "extern" then
-			local type,name,params = string.match(value, "(%w+)%s(%w+)%s(.+)")
-			if type == "float" then
-				parameters[name] = getParameter(params)
-			else
-				local normalized = false
-				params = params:split(" ")
-				values = {}
-				for _,param in ipairs(params) do
-					if param == "normalized" then
-						normalized = true
-					else
-						table.insert(values,getParameter(param))
-					end
-				end
-				parameters[name] = {
-					values = values,
-					normalized = normalized
-				}
-			end
-			parameters[name].type = type
-			code = code.."extern "..type.." "..name..";\n"
-		elseif key == "view" then
-			local splitValue = value:split(";")
-			local position = {
-				tonumber(splitValue[1]), -- x
-				tonumber(splitValue[2]), -- y
-				tonumber(splitValue[3]), -- z
-				tonumber(splitValue[4]), -- speed
-				tonumber(splitValue[5]), -- theta
-				tonumber(splitValue[6]), -- phi
-				tonumber(splitValue[7]), -- projDist
-				tonumber(splitValue[8]), -- threshold
-				tonumber(splitValue[9])  -- maxIterations
-			}
-			table.insert(positions, position)
-		elseif key == "threshold" then
-			self.threshold = tonumber(value)
-		else
-			code = code..line.."\n"
-		end
-	end
-	file:close()
-
-	self.code = code
-	self.parameters = parameters
-	self.positions = positions
+function Fractal:reload()
+	local fractal = Parser.computeFractalCode(self.path, Camera.parameters.coloring:getValue())
+	self.shader = love.graphics.newPixelEffect(fractal.code)
+	self.error = nil
+	self.animated = fractal.animated
+	self.parameters = fractal.parameters
+	self.error = nil
 end
 
 function Fractal:update(dt)
@@ -101,33 +38,35 @@ function Fractal:update(dt)
 		self.lastCheckAge = 0
 		if self.lastModif ~= love.filesystem.getLastModified(self.path) then
 			lastModif = love.filesystem.getLastModified(self.path)
-			self:parse()
-			self:generateShader()
+			self:load()
+		end
+	end
+end
+
+function Fractal:send(parameters)
+	local shader = self.shader
+	for _,parameter in pairs(parameters) do
+		if parameter.kname then
+			debug("sending "..parameter:to_s())
+			shader:send(parameter.kname, parameter:getValue())
 		end
 	end
 end
 
 function Fractal:draw()
+	debug("==================== DRAWING FRACTAL ========================")
+	debug("=============================================================")
 	if not self.error then
 		local shader = self.shader
-		local camera = self.camera
-		for name,desc in pairs(self.parameters) do
-			if desc.type == "float" then
-				shader:send(name, desc.value)
-			elseif desc.type == "vec3" then
-				local vec = vector(desc.values[1].value,desc.values[2].value,desc.values[3].value)
-				if desc.normalized then
-					vec:normalize_inplace()
-				end
-				shader:send(name,vec:table())
-			end
-		end
-		shader:send("maxIterations", camera:getMaxIterations())
-		shader:send("threshold", camera:getThreshold())
+		local camera = Camera
+		debug("Sending fractal parameters")
+		self:send(self.parameters)
+		debug("Sending camera parameters")
+		self:send(camera.parameters)
 		shader:send("position", camera:getPosition():table())
 		shader:send("origin", camera:getOrigin():table())
-		shader:send("planey", camera:getPlaneY():table())
 		shader:send("planex", camera:getPlaneX():table())
+		shader:send("planey", camera:getPlaneY():table())
 		if self.animated then
 			shader:send("time", self.time)
 		end
@@ -136,7 +75,7 @@ function Fractal:draw()
 		love.graphics.setColor(0,0,0,255)
 		love.graphics.rectangle("fill",0,0,Width,Height)		
 		love.graphics.setPixelEffect()
---		self.camera:draw()
+--		camera:draw()
 	else
 		love.graphics.setPixelEffect()
 		love.graphics.setColor(255,255,255)
