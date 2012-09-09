@@ -43,8 +43,7 @@ function love.load()
 	currFractIndex = 1
 	currFractal = fractals[currFractIndex]
 	currFractal:load()
-	gui = Gui()
-	gui.parameters = fractals[currFractIndex].parameters
+	Gui:load()
 end
 
 local function switchTo(fractal)
@@ -70,7 +69,7 @@ end
 function love.draw()
 	currFractal:draw()
 	if not Focus then
-		gui:draw()
+		Gui:draw()
 	end
 end
 
@@ -83,10 +82,10 @@ end
 function love.update(dt)
 	love.mouse.setGrab(Focus)
 	love.mouse.setVisible(not Focus)
-	gui.parametrables = {fractals[currFractIndex],Camera}
+	Gui.parametrables = {Camera,fractals[currFractIndex]}
 
 	if not Focus then
-		gui:update(dt)
+		Gui:update(dt)
 	end
 	currFractal:update(dt)
 	local camera = Camera
