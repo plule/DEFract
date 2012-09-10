@@ -120,7 +120,7 @@ function love.update(dt)
 	if fader then fader(dt) end
 	love.mouse.setGrab(Focus)
 	love.mouse.setVisible(not Focus)
-	Gui.parametrables = {Camera,fractals[currFractIndex], {parameters={fractalSelect}}}
+	Gui.parametrables = {Camera,currFractal, {parameters={fractalSelect}}}
 
 	if not Focus then
 		Gui:update(dt)
@@ -143,19 +143,19 @@ function love.update(dt)
 		if mouse.y == Height-1 then mouse.y = 1 end
 		love.mouse.setPosition(mouse.x, mouse.y)
 	end
-	if love.keyboard.isDown("up") then
+	if love.keyboard.isDown("up") or love.keyboard.isDown("z") or love.keyboard.isDown("w") then
 		setFocus()
 		camera:forward(dt)
 	end
-	if love.keyboard.isDown("down") then
+	if love.keyboard.isDown("down") or love.keyboard.isDown("s") then
 		setFocus()
 		camera:forward(-dt)
 	end
-	if love.keyboard.isDown("left") then
+	if love.keyboard.isDown("left") or love.keyboard.isDown("a") or love.keyboard.isDown("q") then
 		setFocus()
 		camera:left(dt)
 	end
-	if love.keyboard.isDown("right") then
+	if love.keyboard.isDown("right") or love.keyboard.isDown("d") then
 		setFocus()
 		camera:left(-dt)
 	end
