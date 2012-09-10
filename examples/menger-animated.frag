@@ -1,4 +1,4 @@
-#name Rotated Menger Sponge
+#name Animated Menger Sponge
 #description Copied from Fragmentarium code
 
 #view -1.5371;2.15;1.177;70;0;1.57;1;0.001;40
@@ -10,8 +10,8 @@ float RotAngle = mod(time*10.,360.0);
 
 #extern float Iterations 20;5;100
 #extern float Scale 3;0.1;10
-#extern vec3 Offset 240;-500;500 200;-500;500 200;-500;500
-#extern vec3 RotVector 1;0;1 1;0;1 1;0;1 normalized
+#extern vec3 Offset 346;-500;500 240;-500;500 166;-500;500
+#extern vec3 RotVector 0;0;1 0;0;1 1;0;1 normalized
 
 mat3 rotationMatrix3(vec3 v, float angle)
 {

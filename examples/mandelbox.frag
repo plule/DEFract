@@ -1,15 +1,12 @@
 #name Mandelbox
 #description The Mandelbox (taken from http://blog.hvidtfeldts.net/index.php/2011/11/distance-estimated-3d-fractals-vi-the-mandelbox/)
-#view -28;-28;12;2;0.785;1.57;1;0.0004;58
+#view -28;-28;12;2;0.9;2.13;1;0.0004;58
 
 #extern float Iterations 20;5;100;1
 #extern float Scale 2;1;10
 #extern float minRadius2 0.9;0;10
 #extern float fixedRadius2 5;0;10
 #extern float foldingLimit 2;0;5
-
-//#define minRadius2 (minRadius*minRadius)
-//#define fixedRadius2 (fixedRadius*fixedRadius)
 
 void sphereFold(inout vec3 z, inout float dz) {
 	float r2 = dot(z,z);

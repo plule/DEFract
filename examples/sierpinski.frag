@@ -1,7 +1,7 @@
 #name 3D Sierpiński triangle
 #description 3D variation of the Sierpiński. Taken from http://blog.hvidtfeldts.net/index.php/2011/08/distance-estimated-3d-fractals-iii-folding-space/
 
-#view -20;13;-1.4;2;-0.62;1.57;1;0.01;30
+#view -20;13;-1.4;2;5.7;1.5;1;0.01;30
 
 #extern float Iterations 30;5;100;
 #extern float Scale 2;1;20
