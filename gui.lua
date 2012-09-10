@@ -20,6 +20,7 @@ end
 function Gui:update(dt)
 	gui.group.push{grow = "down", pos = {5,5}}
 	love.graphics.setFont(SmallFont)
+	gui.Label{text = "Press left control to open and close this GUI"}
 	gui.Label{text = "FPS : "..tostring(love.timer.getFPS())}
 	for _,parametrable in pairs(self.parametrables) do
 		if parametrable.title then Gui:title(parametrable.title) end

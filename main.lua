@@ -34,7 +34,7 @@ function love.load()
 	BigFont = love.graphics.newFont('LinBiolinum_R.ttf', 40)
 	SmallFont = love.graphics.newFont('Cantarell-Regular.otf',12)
 	MediumFont = love.graphics.newFont('Cantarell-Regular.otf',17)
-	Focus = true
+	Focus = false
 	Parser.load()
 	Camera:load()
 	
@@ -160,10 +160,10 @@ function love.update(dt)
 		camera:left(-dt)
 	end
 	if love.keyboard.isDown("pageup") then
-		camera.projDist.value = camera.projDist.value + dt
+		camera.parameters.projDist.value = camera.parameters.projDist.value + dt
 	end
 	if love.keyboard.isDown("pagedown") then
-		camera.projDist.value = camera.projDist.value - dt
+		camera.parameters.projDist.value = camera.parameters.projDist.value - dt
 	end
 end
 
