@@ -34,17 +34,11 @@ Then, you might see a black screen, try to move your mouse to find something.
 
 ### Keybindings :
  * Arrows to move
- * pageup/pagedown to change speed
+ * pageup/pagedown to change focal distance
  * Mouse to look around
- * left control to zoom
- * Click to get/lose focus
- * Return to switch between predefined views (if any)
+ * left control to open gui control panel
  * Tab to switch between fractals
- * scroll to change the number of iterations of the renderer (try this if everything is too dark, or too blobby or whatever)
- * F2 to take a screenshot. It will be store in the LÖVE saving directory. You can find this directory by pressing "space"
- * F3 to start recording. It will be stored as a lot of jpgs. Be careful of your disk space.
- * F4 to slow down time. Useful for recording.
- * Space to display informations
+ * F2 to take a screenshot. It will be store in the LÖVE saving directory.
  * Escape to exit
 
 Go to the LÖVE saving directory (displayed with "space" key) and play with the code of the fractal you are seeing. You can see your modification just when you save. Really, you should do this on the rotated menger. You can use the variable "time" if you want animated things.
