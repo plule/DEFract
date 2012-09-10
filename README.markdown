@@ -7,22 +7,21 @@ It uses [LÖVE](https://love2d.org/) and GLSL.
 
 Do not think this is stable. Use at your own risk. I can't be held responsible if your gpu burns.
 
-Get latest update on [github](https://github.com/PierreLu/DEFract).
+Get latest update on [github](https://github.com/plule/DEFract).
 
 What can DEFract do?
 --------------------
 
 DEFract produces explorable fractals like this :
-![Mechanical madness](https://github.com/PierreLu/DEFract/blob/master/renders/DEFract_12.jpg?raw=true)
+![Mechanical madness](https://github.com/plule/DEFract/blob/master/renders/DEFract_12.jpg?raw=true)
 
 Currently you can :
  * Explore 3D fractals (yay!) (even animated one)
  * Edit in real-time the code of the fractals (you save, the fractal is refreshed)
- * Switch between pre-defined views
- * Save screenshots and all the infos someone need to reproduce your screenshot
- * Record animations
+ * Play with the parameters of the fractal
+ * Save screenshots
 
-![Animated menger sponge](https://github.com/PierreLu/DEFract/blob/master/renders/psyche2.gif?raw=true)
+![Animated menger sponge](https://github.com/plule/DEFract/blob/master/renders/psyche2.gif?raw=true)
 
 How can I do this?
 ------------------
@@ -53,7 +52,7 @@ Go to the LÖVE saving directory (displayed with "space" key) and play with the 
 What ressources have been used?
 -------------------------------
 
-Mainly, LÖVE is used. The vector class from [hump library](http://vrld.github.com/hump/) has been partially adaptated for 3D operations.
+Mainly, LÖVE is used. The [hump library](http://vrld.github.com/hump/) and [Quickie](https://github.com/vrld/Quickie) library (for the gui. and it's awesome.) has been used.
 
 I (Pierre Lulé) made the navigation and the rendering.
 
@@ -66,13 +65,12 @@ What is missing?
 
  * Better render for screenshots
  * Faster render for real-time
- * Better control
  * Automatic save of the views in the file
  * Alot of bugs/crashes are still present
  * More fractals
  * 2D support (why not?)
 
 Some more pics :
-![Mandelbox](https://github.com/PierreLu/DEFract/blob/master/renders/DEFract_3.jpg?raw=true)
+![Mandelbox](https://github.com/plule/DEFract/blob/master/renders/DEFract_3.jpg?raw=true)
 ![Rotated Mandelbox](http://i.imgur.com/Vshm6.jpg)
 ![Inside the rotated Mandelbox](http://i.imgur.com/Z3SxB.jpg)

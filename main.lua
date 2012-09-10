@@ -26,6 +26,9 @@ local function switchTo(fractal)
 end
 
 function love.load()
+	version = "0.5"
+	love.filesystem.setIdentity("DEFract_"..version)
+
 	Width = love.graphics.getWidth()
 	Height = love.graphics.getHeight()
 	BigFont = love.graphics.newFont('LinBiolinum_R.ttf', 40)

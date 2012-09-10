@@ -12,9 +12,9 @@ lin64=love-bin/love64
 
 game=defract
 sources=*.lua */*.lua
-res=
+res=*/*.frag */*/*.frag *.ttf *.otf
 readme=README.markdown
-version=0.4
+version=0.5
 
 distname = $(game)-$(version)
 
