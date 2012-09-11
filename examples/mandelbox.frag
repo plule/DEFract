@@ -1,6 +1,10 @@
 #name Mandelbox
 #description The Mandelbox (taken from http://blog.hvidtfeldts.net/index.php/2011/11/distance-estimated-3d-fractals-vi-the-mandelbox/)
-#view -28;-28;12;2;0.9;2.13;1;0.0004;58
+
+#quality high 0.0004;58
+#quality low 0.004;50
+
+#view -28;-28;12;2;0.9;2.13;1
 
 #extern float Iterations 20;5;100;1
 #extern float Scale 2;1;10

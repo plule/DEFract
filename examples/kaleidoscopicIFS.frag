@@ -1,7 +1,10 @@
 #name Kaleidoscopic IFS
 #description Taken from http://www.fractalforums.com/3d-fractal-generation/kaleidoscopic-%28escape-time-ifs%29/
 
-#view 6.2;4.8;7.2;2;3.79;2.3;1;0.001;90
+#quality high 0.001;90
+#quality low 0.01;50
+
+#view 6.2;4.8;7.2;2;3.79;2.3;1
 
 #extern float Iterations 10;5;100;1
 #extern float scale 2;0.1;10

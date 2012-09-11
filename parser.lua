@@ -66,6 +66,7 @@ function Parser.parse(path)
 		animated = false,
 		parameters = {},
 		positions = {},
+		quality = {},
 		path = path
 	}
 	file:open('r')
@@ -93,10 +94,19 @@ function Parser.parse(path)
 					tonumber(splitValue[5]), -- theta
 					tonumber(splitValue[6]), -- phi
 					tonumber(splitValue[7]), -- projDist
-					tonumber(splitValue[8]), -- threshold
-					tonumber(splitValue[9])  -- maxIterations
+				--	tonumber(splitValue[8]), -- threshold
+				--	tonumber(splitValue[9])  -- maxIterations
 				}
 				table.insert(ret.positions, position)
+			elseif key == "quality" then
+				local name,quality = string.match(value, "(%w+)%s(.+)")
+				local split = quality:split(";")
+				local quality = {
+					tonumber(split[1]), -- threshold
+					tonumber(split[2]), -- maxIterations
+				}
+				ret.quality[name] = quality	
+				print(name)
 			else
 				ret.code = ret.code..line.."\n"
 			end

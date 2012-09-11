@@ -1,7 +1,10 @@
 #name Rotated Menger Sponge
 #description Copied from Fragmentarium code
 
-#view -1.5371;2.15;1.177;70;0;1.6;1;0.001;40
+#quality high 0.001;40
+#quality low 0.01;30
+
+#view -1.5371;2.15;1.177;70;0;1.6;1
 
 mat3 rot;
 #extern float Iterations 20;5;100

@@ -1,7 +1,10 @@
 #name Spheres
 #description Inspired by http://blog.hvidtfeldts.net/index.php/2011/08/distance-estimated-3d-fractals-iii-folding-space/
 
-#view -8.24;31.79;10.14;2;0;1.57;1;0.0002;100
+#quality high 0.0002;100
+#quality low 0.002;70
+
+#view -8.24;31.79;10.14;2;0;1.57;1
 
 #animated true
 

@@ -1,7 +1,10 @@
 #name Menger Sponge
 #description Copied from Fragmentarium code
 
-#view -1.5371;2.15;1.177;70;1.57;1.58;1;0.001;40
+#quality high 0.001;40
+#quality low 0.01;30
+
+#view -1.5371;2.15;1.177;70;1.57;1.58;1
 
 #extern float Scale 3;0;5
 #extern vec3 Offset 240;-500;500 200;-500;500 200;-500;500

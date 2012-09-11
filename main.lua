@@ -41,6 +41,7 @@ function love.load()
 	BigFont = love.graphics.newFont('LinBiolinum_R.ttf', 40)
 	SmallFont = love.graphics.newFont('Cantarell-Regular.otf',12)
 	MediumFont = love.graphics.newFont('Cantarell-Regular.otf',17)
+	Quality = "low"
 	Focus = false
 	Parser.load()
 	Camera:load()
@@ -56,6 +57,7 @@ function love.load()
 	users = love.filesystem.enumerate("fractals")
 	-- Copy of all the fractals to user's dir
 	for _,file in ipairs(examples) do
+		debug("Reading "..file)
 		if file:sub(-5) == ".frag" and not table.contains(users,file) then
 			src = love.filesystem.newFile("examples/"..file)
 			src:open('r')
@@ -67,6 +69,7 @@ function love.load()
 
 	-- Load all this
 	for _,file in ipairs(love.filesystem.enumerate("fractals")) do
+		debug("Parsing "..file)
 		if file:sub(-5) == ".frag" then
 			table.insert(fractals, Fractal("fractals/"..file))
 		end

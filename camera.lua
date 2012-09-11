@@ -19,6 +19,7 @@ function Camera:load()
 end
 
 function Camera:update(x,y,z, speed, theta, phi, projDist, threshold, maxIterations, fractal)
+	debug(x,y,z,speed,theta,phi,projDist,threshold,maxIterations,fractal)
 	self.position = vector(x,y,z)
 	self.theta = theta
 	self.phi = phi

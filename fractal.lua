@@ -23,7 +23,10 @@ function Fractal:load()
 	self.parameters = fractal.parameters
 	self.name = fractal.name
 	self.description = fractal.description
-	Camera:update(unpack(fractal.positions[1]))
+	local p = fractal.positions[1]
+	local q = fractal.quality[Quality]
+	print(fractal.quality["high"])
+	Camera:update(p[1],p[2],p[3],p[4],p[5],p[6],p[7],q[1],q[2])--unpack(fractal.positions[1]))
 	self.error = nil
 end
 
