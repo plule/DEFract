@@ -33,7 +33,7 @@ GlobalParameters = {
 }
 
 function love.load()
-	version = "0.5"
+	version = "0.5.3"
 	love.filesystem.setIdentity("DEFract_"..version)
 
 	Width = love.graphics.getWidth()
