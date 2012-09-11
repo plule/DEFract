@@ -25,6 +25,13 @@ local function switchTo(fractal)
 	printTitle()
 end
 
+GlobalParameters = {
+	autoReload = {
+		checked = false,
+		label = "Automatic reload"
+	}
+}
+
 function love.load()
 	version = "0.5"
 	love.filesystem.setIdentity("DEFract_"..version)
@@ -120,7 +127,7 @@ function love.update(dt)
 	if fader then fader(dt) end
 	love.mouse.setGrab(Focus)
 	love.mouse.setVisible(not Focus)
-	Gui.parametrables = {Camera,currFractal, {parameters={fractalSelect}}}
+	Gui.parametrables = {{parameters={fractalSelect}},Camera,currFractal}
 
 	if not Focus then
 		Gui:update(dt)

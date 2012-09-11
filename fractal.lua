@@ -1,6 +1,7 @@
 Class = require "hump.class"
 require "parser"
 require "camera"
+require "parameter"
 
 Fractal = Class{
 	function(self, path)
@@ -46,13 +47,16 @@ function Fractal:reload()
 end
 
 function Fractal:update(dt)
-	self.lastCheckAge = self.lastCheckAge+dt
 	self.time = self.time+dt
-	if self.lastCheckAge >= 0.5 then
-		self.lastCheckAge = 0
-		if self.lastModif ~= love.filesystem.getLastModified(self.path) then
-			lastModif = love.filesystem.getLastModified(self.path)
-			self:load()
+	
+	if GlobalParameters.autoReload.checked then
+		self.lastCheckAge = self.lastCheckAge+dt
+		if self.lastCheckAge >= 0.5 then
+			self.lastCheckAge = 0
+			if self.lastModif ~= love.filesystem.getLastModified(self.path) then
+				lastModif = love.filesystem.getLastModified(self.path)
+				self:reload()
+			end
 		end
 	end
 end

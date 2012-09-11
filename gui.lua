@@ -22,6 +22,16 @@ function Gui:update(dt)
 	love.graphics.setFont(SmallFont)
 	gui.Label{text = "Press left control to open and close this GUI"}
 	gui.Label{text = "FPS : "..tostring(love.timer.getFPS())}
+	
+	gui.Checkbox{info=GlobalParameters.autoReload}
+	if not GlobalParameters.autoReload.checked then
+		gui.group.push{grow = "down", size = {200,20}}
+		if gui.Button{text = "Reload"} then
+			currFractal:reload()
+		end
+		gui.group.pop{}
+	end
+	
 	for _,parametrable in pairs(self.parametrables) do
 		if parametrable.title then Gui:title(parametrable.title) end
 		love.graphics.setFont(SmallFont)
@@ -29,6 +39,8 @@ function Gui:update(dt)
 			parameter:quickieUpdate(gui,true)
 		end
 	end
+
+	gui.group.pop{}
 end
 
 function Gui:draw()
