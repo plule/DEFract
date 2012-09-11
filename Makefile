@@ -14,7 +14,7 @@ game=defract
 sources=*.lua */*.lua
 res=*/*.frag */*/*.frag *.ttf *.otf
 readme=README.markdown
-version=0.5
+version=0.5.3
 
 distname = $(game)-$(version)
 
@@ -29,7 +29,7 @@ test :
 dist : love win osx lin32 lin64
 
 love : $(builddir)/$(game).love
-	cp $(builddir)/$(game).love $(distdir)/$(game).love
+	cp $(builddir)/$(game).love $(distdir)/$(distname).love
 
 osx : $(builddir)/$(game).app
 	cd $(builddir); \
