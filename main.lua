@@ -41,7 +41,7 @@ function love.load()
 	BigFont = love.graphics.newFont('LinBiolinum_R.ttf', 40)
 	SmallFont = love.graphics.newFont('Cantarell-Regular.otf',12)
 	MediumFont = love.graphics.newFont('Cantarell-Regular.otf',17)
-	Quality = "low"
+	Quality = "high"
 	Focus = false
 	Parser.load()
 	Camera:load()

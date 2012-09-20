@@ -6,6 +6,6 @@ extern vec3 planey;
 float w = %f;     // Size of the window
 float h = %f;
 extern float maxIterations; // Max number of rendering step
-extern float threshold;// Limit to estimate that we touch the object
+extern float thresholdFactor;// Limit to estimate that we touch the object
 int maxIt; // maxIterations converted to int
 float PI = 3.141592654;

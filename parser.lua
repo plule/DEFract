@@ -12,6 +12,8 @@ function Parser.load()
 	Parser.codeEffect = love.filesystem.read('glsl/effect.frag')
 	Parser.codeHeader = love.filesystem.read('glsl/codeHeader.frag')
 	Parser.animationHeader = love.filesystem.read('glsl/animationHeader.frag')
+	Parser.bgColorCode = Parser.parse('glsl/background/simple.frag')
+	Parser.fogCode = Parser.parse('glsl/fog/simple.frag')
 end
 
 local function getParameterOptions(string)
@@ -105,8 +107,7 @@ function Parser.parse(path)
 					tonumber(split[1]), -- threshold
 					tonumber(split[2]), -- maxIterations
 				}
-				ret.quality[name] = quality	
-				print(name)
+				ret.quality[name] = quality     
 			else
 				ret.code = ret.code..line.."\n"
 			end
@@ -125,7 +126,7 @@ function Parser.computeFractalCode(fractalPath, coloringCode)
 	if fractalCode.animated then
 		finalCode = finalCode..Parser.animationHeader
 	end
-	finalCode = finalCode..fractalCode.code..coloringCode.code..Parser.codeEffect
+	finalCode = finalCode..fractalCode.code..Parser.bgColorCode.code..Parser.fogCode.code..coloringCode.code..Parser.codeEffect
 	fractalCode.code = finalCode
 	debug("Final shader code :\n"..finalCode)
 	return fractalCode

@@ -25,7 +25,7 @@ function Camera:update(x,y,z, speed, theta, phi, projDist, threshold, maxIterati
 	self.phi = phi
 	self.parameters.speed = Parameter{name="Speed", type="float", value=speed, min=0.0000001,max=10}
 	self.parameters.projDist = Parameter{name="Projection Distance", type="float", value=projDist, min=0, max=2}							 
-	self.parameters.threshold = Parameter{name="Threshold", kname="threshold", shader=true, type="float", value=threshold, min=0.00001, max=0.005}
+	self.parameters.threshold = Parameter{name="Threshold", kname="thresholdFactor", shader=true, type="float", value=1, min=0., max=2}
 	self.parameters.maxIterations = Parameter{name="Max iterations", kname="maxIterations", shader=true, type="int", value=maxIterations, min=5, max=200}
 end
 
